@@ -1,0 +1,42 @@
+{
+  "default": {
+    "requireModule": [
+      "ts-node/register",
+      "tsconfig-paths/register"
+    ],
+    "require": [
+      "src/hooks/**/*.ts",
+      "src/support/**/*.ts",
+      "src/step-definitions/**/*.ts"
+    ],
+    "format": [
+      "progress-bar",
+      "json:reports/cucumber-report.json",
+      "html:reports/cucumber-report.html",
+      "allure-cucumberjs/reporter"
+    ],
+    "paths": [
+      "src/features/login.feature",
+      "src/features/videoDiscoveryAndSearch.feature",
+      "src/features/editorWorkspaceAndTitle.feature",
+      "src/features/letsBeginNarrative.feature",
+      "src/features/thinkMultipleChoice.feature",
+      "src/features/thinkOpenAnswer.feature",
+      "src/features/digDeeperSupplemental.feature",
+      "src/features/discussForums.feature",
+      "src/features/andFinallyConclusion.feature",
+      "src/features/exploratoryCoverage.feature",
+      "src/features/landing_page.feature",
+      "src/features/tagsModule.feature",
+      "src/features/seeTagsInYourLesson.feature"
+    ],
+    "parallel": 1,
+    "failFast": false
+  },
+  "smoke": {
+    "tags": "@smoke"
+  },
+  "regression": {
+    "tags": "@regression"
+  }
+}
