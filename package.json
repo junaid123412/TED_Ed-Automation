@@ -1,0 +1,34 @@
+{
+  "name": "playwright-cucumber-bdd",
+  "version": "1.0.0",
+  "private": true,
+  "type": "commonjs",
+  "scripts": {
+    "test": "cucumber-js --tags \"not @skip\"",
+    "test:smoke": "cucumber-js --tags @smoke",
+    "test:regression": "cucumber-js --tags @regression",
+    "test:headed": "HEADLESS=false cucumber-js",
+    "report": "node scripts/generate-report.js",
+    "test:report": "npm test && npm run report"
+  },
+  "dependencies": {
+    "@cucumber/cucumber": "^9.0.0",
+    "dotenv": "^16.0.0",
+    "multiple-cucumber-html-reporter": "^3.10.0",
+    "playwright": "^1.45.0",
+    "ts-node": "^10.9.1",
+    "tsconfig-paths": "^4.2.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.60.0",
+    "@types/node": "^20.0.0",
+    "allure-commandline": "^2.42.1",
+    "allure-cucumberjs": "^3.10.0",
+    "typescript": "^5.5.0"
+  },
+  "description": "",
+  "main": "index.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
