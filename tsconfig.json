@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "commonjs",
+    "lib": ["ES2020", "DOM"],
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "skipLibCheck": true,
+    "baseUrl": ".",
+    "rootDir": ".",
+    "outDir": "dist",
+    "paths": {
+      "@pages/*": ["src/pages/*"],
+      "@steps/*": ["src/step-definitions/*"],
+      "@hooks/*": ["src/hooks/*"],
+      "@support/*": ["src/support/*"],
+      "@assertions/*": ["src/assertions/*"],
+      "@utils/*": ["src/utils/*"]
+    }
+  },
+  "include": ["src/**/*.ts", "playwright.config.ts"],
+  "exclude": ["node_modules", "reports", "test-results", "dist"]
+}
