@@ -165,8 +165,8 @@ BeforeAll(async () => {
     viewport: { width: 1280, height: 720 },
     ignoreHTTPSErrors: true,
     httpCredentials: {
-      username: 'teduser',
-      password: 'tUeygHu@4q',
+      username: envConfig.basicAuthUsername,
+      password: envConfig.basicAuthPassword,
     },
   });
 
@@ -199,8 +199,8 @@ Before(async function (this: CustomWorld) {
         viewport: { width: 1280, height: 720 },
         ignoreHTTPSErrors: true,
         httpCredentials: {
-          username: 'teduser',
-          password: 'tUeygHu@4q',
+          username: envConfig.basicAuthUsername,
+          password: envConfig.basicAuthPassword,
         },
       });
       
