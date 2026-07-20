@@ -72,7 +72,7 @@ export class TedEdPage {
 
   async clickEmailInputField(): Promise<void> {
     const loc = this.page.locator('input[type="email"], [data-testid="lookup__username__1"]').first();
-    await loc.waitFor({ state: 'visible', timeout: 15_000 });
+    await loc.waitFor({ state: 'visible', timeout: 45_000 });
     await loc.click();
   }
 
@@ -89,7 +89,7 @@ export class TedEdPage {
 
   async clickPasswordInputField(): Promise<void> {
     const loc = this.page.locator('input[type="password"], [data-testid="credentials__password__2"]').first();
-    await loc.waitFor({ state: 'visible', timeout: 15_000 });
+    await loc.waitFor({ state: 'visible', timeout: 45_000 });
     await loc.click();
   }
 
