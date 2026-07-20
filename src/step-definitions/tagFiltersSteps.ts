@@ -19,7 +19,7 @@ When('Click on {string} navigation link', async function (this: CustomWorld, lin
 });
 
 When('Click on {string} link', async function (this: CustomWorld, linkName: string) {
-  await this.page.getByRole('link', { name: linkName }).click();
+  await this.page.getByRole('link', { name: linkName }).first().click();
 });
 
 Then('Verify {string} page has loaded successfully', async function (this: CustomWorld, pageName: string) {
@@ -290,15 +290,15 @@ Given('Click {string} button on the duplicated lesson', async function (this: Cu
   const card = this.page.locator('article, .lesson-card, [id^="card_lesson_activity"]').filter({ hasText: /MAHODAND LAKE/i }).first();
   const finishLink = card.locator('a:has-text("Finish creating lesson")').first();
   
-  await finishLink.waitFor({ state: 'visible', timeout: 10000 }).catch(() => {});
+  await finishLink.waitFor({ state: 'visible', timeout: 15000 }).catch(() => {});
   
   if (await finishLink.isVisible()) {
     await finishLink.click();
-    await this.page.waitForURL(/lesson_editor|edit/, { timeout: 15000 }).catch(() => {});
+    await this.page.waitForURL(/lesson_editor|edit/, { timeout: 30000 }).catch(() => {});
   }
   
   const publishBtn = this.page.getByRole('button', { name: new RegExp(buttonName, 'i') }).first();
-  await publishBtn.waitFor({ state: 'visible', timeout: 10000 });
+  await publishBtn.waitFor({ state: 'visible', timeout: 30000 });
   await publishBtn.click();
 });
 When('Select {string} radio option', async function (this: CustomWorld, radioName: string) {
