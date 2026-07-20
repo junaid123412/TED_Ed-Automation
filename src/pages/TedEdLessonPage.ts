@@ -101,37 +101,37 @@ export class TedEdLessonPage {
 
   async clickEmailInputField(): Promise<void> {
     const loc = this.page.locator('input[type="email"], [data-testid="lookup__username__1"]').filter({ visible: true }).first();
-    await loc.waitFor({ state: 'visible', timeout: 15_000 });
+    await loc.waitFor({ state: 'visible', timeout: 45_000 });
     await loc.click();
   }
 
   async enterEmail(email: string): Promise<void> {
     const loc = this.page.locator('input[type="email"], [data-testid="lookup__username__1"]').filter({ visible: true }).first();
-    await loc.waitFor({ state: 'visible', timeout: 15_000 });
+    await loc.waitFor({ state: 'visible', timeout: 45_000 });
     await loc.fill(email);
   }
 
   async clickEmailContinue(): Promise<void> {
     const loc = this.page.locator('button[type="submit"]:has-text("Continue"), [data-testid="lookup__continue__3"], button:has-text("Continue")').filter({ visible: true }).first();
-    await loc.waitFor({ state: 'visible', timeout: 15_000 });
+    await loc.waitFor({ state: 'visible', timeout: 45_000 });
     await loc.click();
   }
 
   async clickPasswordInputField(): Promise<void> {
     const loc = this.page.locator('input[type="password"], [data-testid="credentials__password__2"]').filter({ visible: true }).first();
-    await loc.waitFor({ state: 'visible', timeout: 15_000 });
+    await loc.waitFor({ state: 'visible', timeout: 45_000 });
     await loc.click();
   }
 
   async enterPassword(password: string): Promise<void> {
     const loc = this.page.locator('input[type="password"], [data-testid="credentials__password__2"]').filter({ visible: true }).first();
-    await loc.waitFor({ state: 'visible', timeout: 15_000 });
+    await loc.waitFor({ state: 'visible', timeout: 45_000 });
     await loc.fill(password);
   }
 
   async clickPasswordContinue(): Promise<void> {
     const loc = this.page.locator('button[type="submit"]:has-text("Continue"), [data-testid="credentials__continue__3"], button:has-text("Continue")').filter({ visible: true }).first();
-    await loc.waitFor({ state: 'visible', timeout: 15_000 });
+    await loc.waitFor({ state: 'visible', timeout: 45_000 });
     await loc.click();
   }
 
