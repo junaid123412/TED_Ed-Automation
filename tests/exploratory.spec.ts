@@ -17,14 +17,15 @@ test.describe('TED-Ed Lesson Editor — exploratory coverage (TC-051 to TC-100)'
       await context.addCookies(globalCookies);
     }
     await mainPage.verifyDashboard();
-    if (draftUrl && !draftUrl.includes('teduser:tUeygHu')) {
-      draftUrl = draftUrl.replace('https://', 'https://teduser:tUeygHu%404q@');
+    const authPrefix = `${envConfig.basicAuthUsername}:${encodeURIComponent(envConfig.basicAuthPassword)}`;
+    if (draftUrl && !draftUrl.includes(authPrefix)) {
+      draftUrl = draftUrl.replace('https://', `https://${authPrefix}@`);
     }
     if (draftUrl && !publicUrl) {
       publicUrl = draftUrl.replace('/lesson_editor/', '/on/');
     }
-    if (publicUrl && !publicUrl.includes('teduser:tUeygHu')) {
-      publicUrl = publicUrl.replace('https://', 'https://teduser:tUeygHu%404q@');
+    if (publicUrl && !publicUrl.includes(authPrefix)) {
+      publicUrl = publicUrl.replace('https://', `https://${authPrefix}@`);
     }
   });
 
@@ -32,8 +33,8 @@ test.describe('TED-Ed Lesson Editor — exploratory coverage (TC-051 to TC-100)'
   async function createAuthenticatedStudentContext(context: BrowserContext) {
     return await context.browser().newContext({
       httpCredentials: {
-        username: 'teduser',
-        password: 'tUeygHu@4q',
+        username: envConfig.basicAuthUsername,
+        password: envConfig.basicAuthPassword,
       },
     });
   }
@@ -44,8 +45,9 @@ test.describe('TED-Ed Lesson Editor — exploratory coverage (TC-051 to TC-100)'
   test('Setup: Create dynamic draft lesson', async ({ page }) => {
     await mainPage.createLessonForBackground('football');
     draftUrl = page.url();
-    if (!draftUrl.includes('teduser:tUeygHu')) {
-      draftUrl = draftUrl.replace('https://', 'https://teduser:tUeygHu%404q@');
+    const authPrefix = `${envConfig.basicAuthUsername}:${encodeURIComponent(envConfig.basicAuthPassword)}`;
+    if (!draftUrl.includes(authPrefix)) {
+      draftUrl = draftUrl.replace('https://', `https://${authPrefix}@`);
     }
     globalCookies = await page.context().cookies();
     expect(draftUrl).toContain('/lesson_editor/');
