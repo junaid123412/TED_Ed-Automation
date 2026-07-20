@@ -151,10 +151,10 @@ export class TedEdPage {
     if (isLoggedOut) {
       await this.clickSignIn();
       await this.clickEmailInputField();
-      await this.enterEmail('junaid.hussain+1@kualitatem.com');
+      await this.enterEmail(envConfig.tedLoginEmail);
       await this.clickEmailContinue();
       await this.clickPasswordInputField();
-      await this.enterPassword('test@112233');
+      await this.enterPassword(envConfig.tedLoginPassword);
       await this.clickPasswordContinue();
       await this.acceptConsentIfVisible();
     }
