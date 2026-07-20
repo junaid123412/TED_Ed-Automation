@@ -104,7 +104,11 @@ The report will be available locally at `reports/html-report/index.html`.
 ## ⚙️ Configuration & Environment
 
 * **Target URL**: The tests default to run against `https://teded-integration.herokuapp.com/`.
-* **Environment Variables**: Configure variables by creating a `.env` file in the root directory (automatically ignored by git):
+* **Environment Variables**: Copy the `.env.example` template to a new `.env` file in the root directory:
+  ```bash
+  cp .env.example .env
+  ```
+  Fill in the values for the following variables:
   * `HTTP_AUTH_USERNAME`: HTTP Basic Auth username.
   * `HTTP_AUTH_PASSWORD`: HTTP Basic Auth password.
   * `TED_LOGIN_EMAIL`: Login email for the application.
