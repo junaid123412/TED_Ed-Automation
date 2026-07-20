@@ -1,0 +1,41 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Run all BDD features",
+      "type": "shell",
+      "command": "npm test",
+      "problemMatcher": [],
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "Run BDD features in Headed Mode",
+      "type": "shell",
+      "command": "npm run test:headed",
+      "problemMatcher": []
+    },
+    {
+      "label": "Run specific BDD Tag",
+      "type": "shell",
+      "command": "npx cucumber-js --tags \"${input:tagName}\"",
+      "problemMatcher": []
+    },
+    {
+      "label": "Run Playwright exploratory spec (all browsers)",
+      "type": "shell",
+      "command": "npx playwright test",
+      "problemMatcher": []
+    }
+  ],
+  "inputs": [
+    {
+      "id": "tagName",
+      "type": "promptString",
+      "description": "Enter the Cucumber tag name to run (e.g., @letsBegin, @thinkMCQ)",
+      "default": "@letsBegin"
+    }
+  ]
+}
