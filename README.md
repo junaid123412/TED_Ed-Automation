@@ -55,33 +55,29 @@ npx playwright install
 The framework supports running Cucumber features (BDD style) and Playwright Spec files directly on any operating system (Windows, macOS, Linux).
 
 ### Run Cucumber BDD Tests
-* **Run all features** (excluding skipped scenarios):
+* **Run all BDD features** (excluding skipped scenarios):
   ```bash
   npm test
-  ```
-* **Run Smoke Tests**:
-  ```bash
-  npm run test:smoke
-  ```
-* **Run Regression Tests**:
-  ```bash
-  npm run test:regression
   ```
 * **Run Headed Mode** (Interactive):
   ```bash
   npm run test:headed
   ```
 * **Run Specific Feature Tags**:
-  To run specific scenarios/features by their tag (e.g., `@letsBegin`, `@thinkMCQ`, `@discussForums`):
+  To run specific scenarios/features by their tag (e.g., `@letsBegin`, `@thinkMCQ`):
   ```bash
   npx cucumber-js --tags "@tagName"
   ```
 
-### Run Playwright Exploratory Spec
-To run the automated exploratory tests (covering test cases **TC-051 to TC-100**):
-```bash
-npx playwright test
-```
+### Run Playwright Exploratory Spec (TC-051 to TC-100)
+* **Run on all browsers** (Chromium, Firefox, and WebKit concurrently):
+  ```bash
+  npx playwright test
+  ```
+* **Run on a specific browser** (e.g., Firefox or WebKit):
+  ```bash
+  npx playwright test --project=firefox
+  ```
 
 ---
 
