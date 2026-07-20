@@ -1,6 +1,7 @@
 import { Given, Then, When, Before, After } from '@cucumber/cucumber';
 import { expect } from '@playwright/test';
 import { CustomWorld } from '../support/world';
+import { envConfig } from '@utils/envConfig';
 
 let registrationContext: any = null;
 
@@ -15,8 +16,8 @@ Before({ tags: '@registerAccount', timeout: 60000 }, async function (this: Custo
     viewport: { width: 1280, height: 720 },
     ignoreHTTPSErrors: true,
     httpCredentials: {
-      username: 'teduser',
-      password: 'tUeygHu@4q',
+      username: envConfig.basicAuthUsername,
+      password: envConfig.basicAuthPassword,
     },
   });
   
