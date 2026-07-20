@@ -7,7 +7,7 @@
     "test": "cucumber-js --tags \"not @skip\"",
     "test:smoke": "cucumber-js --tags @smoke",
     "test:regression": "cucumber-js --tags @regression",
-    "test:headed": "HEADLESS=false cucumber-js",
+    "test:headed": "cross-env HEADLESS=false cucumber-js",
     "report": "node scripts/generate-report.js",
     "test:report": "npm test && npm run report"
   },
@@ -24,6 +24,7 @@
     "@types/node": "^20.0.0",
     "allure-commandline": "^2.42.1",
     "allure-cucumberjs": "^3.10.0",
+    "cross-env": "^10.1.0",
     "typescript": "^5.5.0"
   },
   "description": "",
