@@ -13,14 +13,14 @@ export class CustomWorld extends World {
 
   // HTTP Basic Auth — used before the app loads
   accountAccess = {
-    username: 'teduser',
-    password: 'tUeygHu@4q',
+    username: envConfig.basicAuthUsername,
+    password: envConfig.basicAuthPassword,
   };
 
   // TED-Ed login credentials — used on the auth.ted.com screen
   credentials = {
-    email: 'junaid.hussain+1@kualitatem.com',
-    password: 'test@112233',
+    email: envConfig.tedLoginEmail,
+    password: envConfig.tedLoginPassword,
   };
 
   baseUrl = envConfig.baseUrl;
