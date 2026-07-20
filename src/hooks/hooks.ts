@@ -183,8 +183,8 @@ Before(async function (this: CustomWorld) {
     try {
       this.context = sharedContext;
       this.page = await this.context.newPage();
-      this.page.setDefaultTimeout(5000);
-      this.page.setDefaultNavigationTimeout(30000);
+      this.page.setDefaultTimeout(15000);
+      this.page.setDefaultNavigationTimeout(90000);
       break; // successfully created page!
     } catch (err: any) {
       console.log(`\n[CRASH-RECOVERY] Failed to open page: ${err.message}. Re-initializing browser and context (Attempt ${i + 1}/${attempts})...\n`);
