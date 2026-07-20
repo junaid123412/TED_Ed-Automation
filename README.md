@@ -55,7 +55,7 @@ npx playwright install
 The framework supports running Cucumber features (BDD style) and Playwright Spec files directly on any operating system (Windows, macOS, Linux).
 
 ### Run Cucumber BDD Tests
-* **Run all BDD features** (excluding skipped scenarios):
+* **Run all BDD features**:
   ```bash
   npm test
   ```
