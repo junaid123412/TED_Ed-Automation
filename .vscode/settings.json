@@ -1,0 +1,7 @@
+{
+  "cucumber.features": ["src/features/**/*.feature"],
+  "cucumber.glue": ["src/step-definitions/**/*.ts"],
+  "cucumberstrict": false,
+  "cucumberautocomplete.steps":["src/step-definitions/**/*.ts"],
+  "cucumberautocomplete.features": ["src/features/**/*.feature"]
+}
