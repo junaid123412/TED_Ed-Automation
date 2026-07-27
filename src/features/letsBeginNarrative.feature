@@ -10,6 +10,7 @@ Feature: Lets Begin Narrative Section Module
     And I am on the lesson editor screen
 
   @case15
+  @run-failed-temp
   Scenario: Case 15: Introduction Framework Node Expansion
     When I click the workflow stage anchor point Let's Begin
     Then the modal header should identify the context as "Introduction"
@@ -42,6 +43,7 @@ Feature: Lets Begin Narrative Section Module
     Then the hyperlink should be embedded in the text
 
   @case19
+  @run-failed-temp
   Scenario: Case 19: Clear Text Decoration Parameters
     Given I have opened the Let's Begin dialog
     And I have entered and formatted the text "football" in the introduction field
@@ -50,6 +52,7 @@ Feature: Lets Begin Narrative Section Module
     Then the text styling should be cleared
 
   @case20
+  @run-failed-temp
   Scenario: Case 20: Persist Workspace Introduction Content Blocks
     Given I have opened the Let's Begin dialog
     When I enter the text "football" in the introduction field
@@ -57,6 +60,7 @@ Feature: Lets Begin Narrative Section Module
     Then the lesson updated toast message should display
 
   @case21
+  @run-failed-temp
   Scenario: Case 21: Verify Core Page Layout Refreshes
     Given I have opened the Let's Begin dialog
     When I enter the text "football" in the introduction field
