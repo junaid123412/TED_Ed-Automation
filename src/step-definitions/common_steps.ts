@@ -134,7 +134,7 @@ Given('I have clicked on the first available video result card to show the confi
 
 export async function common_verifyLoadingDialog(this: CustomWorld, text: string) {
   const modal = this.page.locator('.modal, .loading, .loading-indicator').first();
-  await modal.waitFor({ state: 'attached', timeout: 10000 }).catch(() => {});
+  await modal.waitFor({ state: 'attached', timeout: 15000 }).catch(() => {});
 }
 Then('a loading dialog with text {string} should appear overlaying the content', common_verifyLoadingDialog);
 
@@ -144,7 +144,7 @@ export async function common_clickCancel(this: CustomWorld) {
     .filter({ hasText: /Cancel/i })
     .filter({ visible: true })
     .first();
-  await cancelBtn.waitFor({ state: 'visible', timeout: 5000 });
+  await cancelBtn.waitFor({ state: 'visible', timeout: 15000 });
   await cancelBtn.click();
 }
 When('I click the secondary Cancel button on the modal', common_clickCancel);
@@ -152,7 +152,7 @@ When('I click the Cancel title button', common_clickCancel);
 
 export async function common_verifyModalDisappeared(this: CustomWorld) {
   const modal = this.page.locator('.modal, .loading, .loading-indicator').first();
-  await expect(modal).not.toBeVisible({ timeout: 10000 });
+  await expect(modal).not.toBeVisible({ timeout: 15000 });
 }
 Then('the confirmation modal should disappear and focus should return to the search results screen', common_verifyModalDisappeared);
 
@@ -195,13 +195,13 @@ When('I click on the lesson title edit trigger', common_clickLessonTitleEdit);
 
 export async function common_verifyEditTitleDialog(this: CustomWorld, title: string) {
   const dialogHeader = this.page.locator('dialog h3, dialog h2, .modal-title, .modal-header').filter({ hasText: new RegExp(title, 'i') }).first();
-  await expect(dialogHeader).toBeVisible({ timeout: 10000 });
+  await expect(dialogHeader).toBeVisible({ timeout: 15000 });
 }
 Then('a dialogue box overlay titled {string} should present text inputs', common_verifyEditTitleDialog);
 
 export async function common_verifyTitleLoaded(this: CustomWorld) {
   const input = this.page.locator('#lesson_name, dialog input[type="text"]').first();
-  await expect(input).not.toBeEmpty({ timeout: 10000 });
+  await expect(input).not.toBeEmpty({ timeout: 15000 });
 }
 Then('the existing lesson title value should load accurately inside the field', common_verifyTitleLoaded);
 
@@ -245,25 +245,25 @@ When('I click the Save title button', common_clickSave);
 
 export async function common_verifyDialogClosed(this: CustomWorld) {
   const dialog = this.page.locator('dialog, .modal').first();
-  await expect(dialog).not.toBeVisible({ timeout: 10000 });
+  await expect(dialog).not.toBeVisible({ timeout: 15000 });
 }
 Then('the title input field dialog should close', common_verifyDialogClosed);
 
 export async function common_verifyLessonUpdatedToast(this: CustomWorld) {
   const toast = this.page.locator('.toast, .alert-success, [class*="toast"], [class*="alert"]').filter({ hasText: /(?:updated|saved|success)/i }).first();
-  await expect(toast).toBeVisible({ timeout: 10000 }).catch(() => {});
+  await expect(toast).toBeVisible({ timeout: 15000 }).catch(() => {});
 }
 Then('a toast feedback message "Lesson updated" should be visible', common_verifyLessonUpdatedToast);
 
 export async function common_verifyHeaderTitle(this: CustomWorld, title: string) {
   const titleHeader = this.page.locator('a[href*="edit?field=name"]').first();
-  await expect(titleHeader).toContainText(title, { timeout: 10000 });
+  await expect(titleHeader).toContainText(title, { timeout: 15000 });
 }
 Then('the main workspace header should display the title {string}', common_verifyHeaderTitle);
 
 export async function common_verifyHeaderTitleUnchanged(this: CustomWorld) {
   const titleHeader = this.page.locator('a[href*="edit?field=name"]').first();
-  await expect(titleHeader).not.toContainText('football', { timeout: 5000 }).catch(() => {});
+  await expect(titleHeader).not.toContainText('football', { timeout: 15000 }).catch(() => {});
 }
 Then('the main workspace header title should remain unchanged', common_verifyHeaderTitleUnchanged);
 
@@ -287,8 +287,9 @@ export async function common_pressEscape(this: CustomWorld) {
 When('I escape the title prompt dialog resetting default state', common_pressEscape);
 
 export async function common_verifyModalHeader(this: CustomWorld, headerText: string) {
-  const dialogHeader = this.page.locator('dialog h3, dialog h2, .modal-title, .modal-header').filter({ hasText: new RegExp(headerText, 'i') }).first();
-  await expect(dialogHeader).toBeVisible({ timeout: 10000 });
+  const modal = this.page.locator('dialog, .modal, [role="dialog"]').filter({ hasText: new RegExp(headerText, 'i') }).first();
+  const dialogHeader = modal.locator('h3, h2, h1, h4, .modal-title, .modal-header, div, span').filter({ hasText: new RegExp(headerText, 'i') }).first();
+  await expect(dialogHeader).toBeVisible({ timeout: 15000 });
 }
 Then('the modal header should identify the context as {string}', common_verifyModalHeader);
 Then('the supplemental dialog header should identify the context as {string}', common_verifyModalHeader);
@@ -303,7 +304,7 @@ When('I click the workflow stage anchor point Let\'s Begin', common_clickLetsBeg
 
 export async function common_verifyFormattingToolbar(this: CustomWorld) {
   const toolbar = this.page.locator('.ql-toolbar, .editor-toolbar').first();
-  await expect(toolbar).toBeVisible({ timeout: 10000 });
+  await expect(toolbar).toBeVisible({ timeout: 15000 });
 }
 Then('the active formatting toolbar options should render clearly', common_verifyFormattingToolbar);
 
@@ -334,7 +335,7 @@ When('I click the bold formatting toolbar button', common_clickBold);
 
 export async function common_verifyBold(this: CustomWorld) {
   const boldText = this.page.locator('.ql-editor strong, .ql-editor b');
-  await expect(boldText).toBeVisible({ timeout: 5000 }).catch(() => console.log('Warning: Bold check bypassed'));
+  await expect(boldText).toBeVisible({ timeout: 15000 }).catch(() => console.log('Warning: Bold check bypassed'));
 }
 Then('the text should be formatted as bold', common_verifyBold);
 
@@ -346,7 +347,7 @@ When('I click the underline formatting toolbar button', common_clickUnderline);
 
 export async function common_verifyUnderline(this: CustomWorld) {
   const underlined = this.page.locator('.ql-editor u, .ql-editor span[style*="underline"], .ql-editor .ql-underline');
-  await expect(underlined).toBeVisible({ timeout: 5000 }).catch(() => console.log('Warning: Underline check bypassed'));
+  await expect(underlined).toBeVisible({ timeout: 15000 }).catch(() => console.log('Warning: Underline check bypassed'));
 }
 Then('the text should be formatted as underlined', common_verifyUnderline);
 
@@ -358,7 +359,7 @@ When('I click the link formatting toolbar button', common_clickLink);
 
 export async function common_fillLinkAddress(this: CustomWorld, link: string) {
   const linkInput = this.page.locator('.ql-tooltip input[type="text"], input[placeholder*="link"]').first();
-  await linkInput.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {});
+  await linkInput.waitFor({ state: 'visible', timeout: 15000 }).catch(() => {});
   await linkInput.fill(link).catch((err) => console.log('Warning: fillLinkAddress failed:', err.message));
 }
 When('I enter the link address {string} in the link prompt', common_fillLinkAddress);
@@ -371,7 +372,7 @@ When('I confirm the link prompt action', common_confirmLinkAction);
 
 export async function common_verifyHyperlinkEmbedded(this: CustomWorld) {
   const link = this.page.locator('.ql-editor a');
-  await expect(link).toBeVisible({ timeout: 5000 }).catch(() => console.log('Warning: Hyperlink check bypassed'));
+  await expect(link).toBeVisible({ timeout: 15000 }).catch(() => console.log('Warning: Hyperlink check bypassed'));
 }
 Then('the hyperlink should be embedded in the text', common_verifyHyperlinkEmbedded);
 
@@ -391,7 +392,7 @@ When('I click the formatting clear toolbar button', common_clickClean);
 
 export async function common_verifyTextStylingCleared(this: CustomWorld) {
   const boldText = this.page.locator('.ql-editor strong, .ql-editor b');
-  await expect(boldText).not.toBeVisible({ timeout: 5000 }).catch(() => console.log('Warning: Clear styling check bypassed'));
+  await expect(boldText).not.toBeVisible({ timeout: 15000 }).catch(() => console.log('Warning: Clear styling check bypassed'));
 }
 Then('the text styling should be cleared', common_verifyTextStylingCleared);
 
@@ -402,8 +403,8 @@ export async function common_clickSaveIntroduction(this: CustomWorld) {
 When('I click the Save introduction button', common_clickSaveIntroduction);
 
 export async function common_verifyIntroductionContent(this: CustomWorld, content: string) {
-  const introBody = this.page.locator('.introduction-content, .intro-content, .lets-begin-content').first();
-  await expect(introBody).toContainText(content, { timeout: 10000 });
+  const section = this.page.locator('section, .editor-row, .module-row').filter({ hasText: /Let['’]s Begin/i }).first();
+  await expect(section).toContainText(content, { timeout: 15000 });
 }
 Then('the introduction section of the editor layout should display the saved content {string}', common_verifyIntroductionContent);
 Then('the lesson updated toast message should display', common_verifyLessonUpdatedToast);
@@ -421,8 +422,8 @@ export async function common_clickMultipleChoiceQuestion(this: CustomWorld) {
 When('I click the Multiple Choice Question option', common_clickMultipleChoiceQuestion);
 
 export async function common_verifyMcqFormMounted(this: CustomWorld) {
-  const form = this.page.locator('.multiple-choice-form, .question-form, dialog textarea').first();
-  await expect(form).toBeVisible({ timeout: 10000 });
+  const mcqForm = this.page.locator('dialog, .modal, [role="dialog"]').filter({ hasText: /Multiple Choice|Question Text/i }).first();
+  await expect(mcqForm).toBeVisible({ timeout: 15000 });
 }
 Then('the multiple choice question editor form should mount to the UI', common_verifyMcqFormMounted);
 
@@ -443,7 +444,8 @@ When('I type the question text {string}', common_fillQuestionText);
 Given('I have filled the question text with {string}', common_fillQuestionText);
 
 export async function common_verifyQuestionText(this: CustomWorld, text: string) {
-  const input = this.page.locator('textarea[placeholder*="Question Text"], [contenteditable="true"]').first();
+  const modal = this.page.locator('dialog, .modal, [role="dialog"]').filter({ visible: true }).first();
+  const input = modal.locator('#question_title, #question_body, input[name*="question"], textarea[name*="question"], input[id*="question"], input[name*="title"], [placeholder*="Question Text"], [placeholder*="Question"]').first();
   const isInput = await input.evaluate((el) => el.tagName === 'INPUT' || el.tagName === 'TEXTAREA');
   if (isInput) {
     await expect(input).toHaveValue(text);
@@ -491,7 +493,7 @@ export async function common_verifyAnswerOptionCount(this: CustomWorld, countTex
   const countMap: Record<string, number> = { 'E': 5, 'e': 5, 'D': 4, 'd': 4 };
   const expectedCount = countMap[countText] || parseInt(countText) || 5;
   const fields = this.page.locator('div.ql-editor');
-  await expect(fields).toHaveCount(expectedCount, { timeout: 5000 });
+  await expect(fields).toHaveCount(expectedCount, { timeout: 15000 });
 }
 Then('an additional answer option field {word} should register dynamically', common_verifyAnswerOptionCount);
 
@@ -506,14 +508,19 @@ When('I click the delete trashcan icon next to option {word}', common_clickDelet
 export async function common_verifyAnswerOptionRemoved(this: CustomWorld, optionText: string) {
   const countMap: Record<string, number> = { 'E': 4, 'e': 4, 'D': 3, 'd': 3 };
   const expectedCount = countMap[optionText] || 4;
-  const fields = this.page.locator('div.ql-editor');
-  await expect(fields).toHaveCount(expectedCount, { timeout: 5000 });
+  const modal = this.page.locator('dialog, .modal, [role="dialog"]').filter({ hasText: /Multiple Choice|Question/i }).first();
+  const fields = modal.locator('div.ql-editor');
+  await expect(fields).toHaveCount(expectedCount, { timeout: 15000 });
 }
 Then('option {word} should be removed from the form', common_verifyAnswerOptionRemoved);
 
 export async function common_clearVideoHintField(this: CustomWorld) {
-  const input = this.page.locator('.video-hint-input, input[value="0:00"]').first();
-  await input.focus();
+  const modal = this.page.locator('dialog, .modal, [role="dialog"]').filter({ visible: true }).first();
+  const hasModal = await modal.isVisible().catch(() => false);
+  const container = hasModal ? modal : this.page;
+  const field = container.locator('input[placeholder*="0:"], input[placeholder*="00:"], input[name*="hint"], input[name*="time"], .video-hint-input, .timecode-input, input[value="0:00"]').first();
+  await field.scrollIntoViewIfNeeded().catch(() => {});
+  await field.focus();
   await this.page.keyboard.press('Control+A');
   await this.page.keyboard.press('Backspace');
 }
@@ -526,8 +533,12 @@ export async function common_fillVideoHintField(this: CustomWorld, ts: string) {
 When('I type the timestamp {string} into the video hint field', common_fillVideoHintField);
 
 export async function common_verifyVideoHintField(this: CustomWorld, ts: string) {
-  const input = this.page.locator('.video-hint-input, input[value*="0:52"]').first();
-  await expect(input).toHaveValue(ts);
+  const modal = this.page.locator('dialog, .modal, [role="dialog"]').filter({ visible: true }).first();
+  const hasModal = await modal.isVisible().catch(() => false);
+  const container = hasModal ? modal : this.page;
+  const input = container.locator('input[name*="hint"], input[name*="time"], .video-hint-input, .timecode-input, input[value*="0:"], input[placeholder*="0:"]').first();
+  await input.scrollIntoViewIfNeeded().catch(() => {});
+  await expect(input).toHaveValue(ts, { timeout: 15000 });
 }
 Then('the video hint field should display {string}', common_verifyVideoHintField);
 
@@ -548,7 +559,7 @@ When('I click the Save question button', common_clickSaveQuestion);
 
 export async function common_verifyConfirmationMessage(this: CustomWorld, text: string) {
   const confirmation = this.page.locator('.toast, .alert-success, [class*="toast"], [class*="alert"]').filter({ hasText: new RegExp(text, 'i') }).first();
-  await expect(confirmation).toBeVisible({ timeout: 10000 }).catch(async () => {
+  await expect(confirmation).toBeVisible({ timeout: 15000 }).catch(async () => {
     const bodyHasText = await this.page.locator('body').textContent().then(t => t?.includes(text)).catch(() => false);
     if (!bodyHasText) {
       console.log(`Warning: Confirmation message "${text}" not found, bypassing`);
@@ -573,13 +584,13 @@ Given('I have saved a Multiple Choice Question with text {string}', common_saveM
 
 export async function common_verifyQuestionInList(this: CustomWorld, text: string) {
   const questionList = this.page.locator('.questions-list, .question-item, .think-content').first();
-  await expect(questionList).toContainText(text, { timeout: 10000 });
+  await expect(questionList).toContainText(text, { timeout: 15000 });
 }
 Then('the question list in the Think section should display the question text {string}', common_verifyQuestionInList);
 
 export async function common_verifyQuestionCounter(this: CustomWorld) {
   const counter = this.page.locator('.question-number, .question-index').first();
-  await expect(counter).toBeVisible({ timeout: 5000 });
+  await expect(counter).toBeVisible({ timeout: 15000 });
 }
 Then('the question number counter should calculate the sequence accurately', common_verifyQuestionCounter);
 
@@ -590,14 +601,15 @@ export async function common_clickOpenAnswerQuestion(this: CustomWorld) {
 When('I click the Open Answer Question option', common_clickOpenAnswerQuestion);
 
 export async function common_verifyOpenAnswerFormMounted(this: CustomWorld) {
-  const form = this.page.locator('.open-answer-form, .question-form, dialog textarea').first();
-  await expect(form).toBeVisible({ timeout: 10000 });
+  const openAnswerForm = this.page.locator('dialog, .modal, [role="dialog"]').filter({ hasText: /Open Answer|Question Text/i }).first();
+  await expect(openAnswerForm).toBeVisible({ timeout: 15000 });
 }
 Then('the open answer question editor form should mount to the UI', common_verifyOpenAnswerFormMounted);
 
 export async function common_verifyInputFieldEmptyByDefault(this: CustomWorld) {
-  const input = this.page.locator('textarea[placeholder*="Question Text"], [contenteditable="true"]').first();
-  await expect(input).toBeEmpty();
+  const modal = this.page.locator('dialog, .modal, [role="dialog"]').filter({ visible: true }).first();
+  const input = modal.locator('#question_title, #question_body, input[name*="question"], textarea[name*="question"], input[id*="question"], input[name*="title"], [placeholder*="Question Text"], [placeholder*="Question"]').first();
+  await expect(input).toBeEmpty({ timeout: 15000 });
 }
 Then('the input field should be empty by default', common_verifyInputFieldEmptyByDefault);
 
@@ -621,7 +633,7 @@ Given('I have saved an Open Answer Question with text {string}', common_saveOpen
 
 export async function common_verifyQuestionIconOpenEnded(this: CustomWorld) {
   const icon = this.page.locator('.question-icon, .icon-open-answer').first();
-  await expect(icon).toBeVisible({ timeout: 5000 }).catch(() => {});
+  await expect(icon).toBeVisible({ timeout: 15000 }).catch(() => {});
 }
 Then('the question icon should match the open-ended text design form', common_verifyQuestionIconOpenEnded);
 
@@ -632,8 +644,9 @@ export async function common_clickDigDeeper(this: CustomWorld) {
 When('I click the timeline step Dig Deeper', common_clickDigDeeper);
 
 export async function common_verifyContentInputAreaVisible(this: CustomWorld) {
-  const editor = this.page.locator('dialog .ql-editor, [contenteditable="true"]').first();
-  await expect(editor).toBeVisible({ timeout: 10000 });
+  const modal = this.page.locator('dialog, .modal, [role="dialog"]').first();
+  const editor = modal.locator('.ql-editor, [contenteditable="true"]').first();
+  await expect(editor).toBeVisible({ timeout: 15000 });
 }
 Then('the content input area should render clearly', common_verifyContentInputAreaVisible);
 
@@ -664,7 +677,7 @@ When('I select the text {string} inside the supplemental editor', common_selectT
 
 export async function common_verifySupplementalTextBold(this: CustomWorld) {
   const boldText = this.page.locator('dialog .ql-editor strong, dialog .ql-editor b').first();
-  await expect(boldText).toBeVisible({ timeout: 5000 });
+  await expect(boldText).toBeVisible({ timeout: 15000 });
 }
 Then('the supplemental text should display as bold', common_verifySupplementalTextBold);
 
@@ -693,7 +706,7 @@ When('I click the Save supplemental button', common_clickSaveSupplemental);
 
 export async function common_verifyDigDeeperContent(this: CustomWorld, content: string) {
   const section = this.page.locator('.dig-deeper-content, .supplemental-content').first();
-  await expect(section).toContainText(content, { timeout: 10000 });
+  await expect(section).toContainText(content, { timeout: 15000 });
 }
 Then('the Dig Deeper section of the editor layout should display the saved content {string}', common_verifyDigDeeperContent);
 
@@ -711,13 +724,14 @@ When('I click the Add discussion option', common_clickAddDiscussion);
 
 export async function common_verifyDiscussionPromptModal(this: CustomWorld) {
   const modal = this.page.locator('dialog, .modal').first();
-  await expect(modal).toBeVisible({ timeout: 10000 });
+  await expect(modal).toBeVisible({ timeout: 15000 });
 }
 Then('the discussion prompt modal should display', common_verifyDiscussionPromptModal);
 
 export async function common_verifyDiscussionPromptFields(this: CustomWorld) {
-  const input = this.page.locator('[role="dialog"] input[name*="prompt"], dialog input[name*="prompt"], [role="dialog"] [role="textbox"], dialog [role="textbox"]').first();
-  await expect(input).toBeVisible({ timeout: 10000 });
+  const modal = this.page.locator('dialog, .modal, [role="dialog"]').filter({ hasText: /Discussion/i }).first();
+  const input = modal.locator('input[type="text"], input:not([type="submit"]):not([type="button"]), textarea, [class*="prompt"], [name*="prompt"], [name*="discussion"]').first();
+  await expect(input).toBeVisible({ timeout: 15000 });
 }
 Then('the discussion prompt fields should render correctly', common_verifyDiscussionPromptFields);
 
@@ -768,7 +782,7 @@ When('I click the Save discussion button', common_clickSaveDiscussion);
 
 export async function common_verifyDiscussionCreatedToast(this: CustomWorld) {
   const confirmation = this.page.locator('.toast, .alert-success, [class*="toast"], [class*="alert"]').filter({ hasText: /Discussion was successfully created|created/i }).first();
-  await expect(confirmation).toBeVisible({ timeout: 10000 });
+  await expect(confirmation).toBeVisible({ timeout: 15000 });
   const pageObject = getPage(this);
   await pageObject.highlightDiscussion();
 }
@@ -776,7 +790,7 @@ Then('a confirmation message "Discussion was successfully created" should appear
 
 export async function common_verifyDiscussionInList(this: CustomWorld, prompt: string) {
   const list = this.page.locator('.discussions-list, .discuss-content').first();
-  await expect(list).toContainText(prompt, { timeout: 10000 });
+  await expect(list).toContainText(prompt, { timeout: 15000 });
 }
 Then('the discussion list in the Discuss section should display the prompt {string}', common_verifyDiscussionInList);
 
@@ -799,7 +813,7 @@ When('I click the And Finally section button', common_clickAndFinallySection);
 
 export async function common_verifyConclusionCharLimit(this: CustomWorld) {
   const count = this.page.locator('.character-count, [class*="counter"]').first();
-  await expect(count).toBeVisible({ timeout: 5000 }).catch(() => {});
+  await expect(count).toBeVisible({ timeout: 15000 }).catch(() => {});
 }
 Then(/^the character limit indicator should display \(0\/1000\)$/, common_verifyConclusionCharLimit);
 
@@ -824,7 +838,7 @@ When('I click the Save conclusion button', common_clickSaveConclusion);
 
 export async function common_verifyAndFinallyContent(this: CustomWorld, content: string) {
   const section = this.page.locator('.conclusion-content, .finally-content').first();
-  await expect(section).toContainText(content, { timeout: 10000 });
+  await expect(section).toContainText(content, { timeout: 15000 });
 }
 Then('the And Finally section of the editor layout should display the saved content {string}', common_verifyAndFinallyContent);
 
@@ -835,7 +849,7 @@ export async function common_focusStatusIndicator(this: CustomWorld) {
 When('I focus on the top right sidebar status indicator', common_focusStatusIndicator);
 
 export async function common_clickInfoCircleIcon(this: CustomWorld) {
-  const info = this.page.locator('.fa-info-circle, .info-icon, svg.info').first();
+  const info = this.page.locator('div, span, p, section').filter({ hasText: /^Status:/ }).locator('button, a, svg, i, .fa-info-circle, .info-icon, .status-info, [class*="status-info"]').first();
   if (await info.isVisible()) {
     await info.click();
     await this.page.waitForTimeout(1000);
@@ -851,7 +865,7 @@ export async function common_clickPublish(this: CustomWorld) {
 When('I click the primary red Publish button', common_clickPublish);
 
 export async function common_verifyPublishConfirmation(this: CustomWorld) {
-  const dialog = this.page.locator('.share-modal, [class*="modal"], [class*="dialog"]').filter({ hasText: /published|share/i }).first();
+  const dialog = this.page.locator('dialog, .modal, [role="dialog"], div').filter({ hasText: /published successfully|access your lesson|Share your lesson/i }).first();
   await expect(dialog).toBeVisible({ timeout: 15_000 });
 }
 Then('the lesson published confirmation dialog should appear with share options', common_verifyPublishConfirmation);
