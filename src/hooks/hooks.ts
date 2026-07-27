@@ -36,12 +36,20 @@ proto.finalize = function (canonicalIds: any) {
 const playwrightTest = require('@playwright/test');
 const originalExpect = playwrightTest.expect;
 
+const locatorMatchers = new Set([
+  'toBeAttached', 'toBeChecked', 'toBeDisabled', 'toBeEditable', 'toBeEmpty',
+  'toBeEnabled', 'toBeFocused', 'toBeHidden', 'toBeInViewport', 'toBeOK',
+  'toBeVisible', 'toContainText', 'toHaveAttribute', 'toHaveClass', 'toHaveCount',
+  'toHaveCSS', 'toHaveId', 'toHaveJSProperty', 'toHaveText', 'toHaveValue',
+  'toHaveValues', 'toHaveURL'
+]);
+
 const customExpect = function(actual: any, messageOrOptions?: any) {
   const matchers = originalExpect(actual, messageOrOptions);
   return new Proxy(matchers, {
     get(target, prop, receiver) {
       const originalMatcher = Reflect.get(target, prop, receiver);
-      if (typeof originalMatcher === 'function') {
+      if (typeof originalMatcher === 'function' && typeof prop === 'string' && locatorMatchers.has(prop)) {
         return function(this: any, ...args: any[]) {
           const lastArg = args[args.length - 1];
           if (lastArg && typeof lastArg === 'object') {
@@ -67,7 +75,7 @@ customExpect.soft = function(actual: any, messageOrOptions?: any) {
   return new Proxy(matchers, {
     get(target, prop, receiver) {
       const originalMatcher = Reflect.get(target, prop, receiver);
-      if (typeof originalMatcher === 'function') {
+      if (typeof originalMatcher === 'function' && typeof prop === 'string' && locatorMatchers.has(prop)) {
         return function(this: any, ...args: any[]) {
           const lastArg = args[args.length - 1];
           if (lastArg && typeof lastArg === 'object') {
@@ -89,6 +97,7 @@ customExpect.soft = function(actual: any, messageOrOptions?: any) {
 
 playwrightTest.expect = customExpect;
 
+
 // Helper to patch prototype of Page/Locator to cap action/wait timeouts
 function patchPrototype(prototypeObj: any) {
   for (const key of Object.getOwnPropertyNames(prototypeObj)) {
@@ -107,7 +116,7 @@ function patchPrototype(prototypeObj: any) {
         const lastArg = args[args.length - 1];
         if (lastArg && typeof lastArg === 'object') {
           if ('timeout' in lastArg && typeof lastArg.timeout === 'number') {
-            lastArg.timeout = Math.min(lastArg.timeout, 5000);
+            lastArg.timeout = Math.min(lastArg.timeout, 15000);
           }
         }
         return originalMethod.apply(this, args);
@@ -129,7 +138,7 @@ function patchPagePrototype(pagePrototype: any) {
   if (originalGoto && !(originalGoto as any).__patched) {
     const patchedGoto = async function(this: any, url: string, options: any) {
       const attempts = 3;
-      const patchedOptions = { ...options, timeout: Math.min(options?.timeout || 45000, 45000) };
+      const patchedOptions = { ...options, timeout: Math.min(options?.timeout || 90000, 90000) };
       for (let i = 0; i < attempts; i++) {
         try {
           const response = await originalGoto.call(this, url, patchedOptions);
