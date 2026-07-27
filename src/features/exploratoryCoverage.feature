@@ -9,6 +9,7 @@ Feature: TED-Ed Lesson Editor — exploratory coverage (TC-051 to TC-100)
   # Module: Lesson Editor - Basics
   # ---------------------------------------------------------------
   @TC-051 @lesson-editor-basics @high @positive
+
   Scenario: Verify Lesson Title field accepts and saves a valid title
     Given User is on the 'Create a Lesson' editor page for a draft lesson
     When Click into the Lesson Title field
@@ -17,6 +18,7 @@ Feature: TED-Ed Lesson Editor — exploratory coverage (TC-051 to TC-100)
     Then The new title is saved and displayed in the Lesson Title field and on the lesson card in 'Your Lessons'
 
   @TC-052 @lesson-editor-basics @high @negative
+  @run-failed-temp
   Scenario: Verify Lesson Title field behavior when left empty
     Given User is on the 'Create a Lesson' editor page
     When Click into the Lesson Title field
@@ -28,6 +30,7 @@ Feature: TED-Ed Lesson Editor — exploratory coverage (TC-051 to TC-100)
   # Module: Lesson Editor - Video
   # ---------------------------------------------------------------
   @TC-053 @lesson-editor-video @high @positive
+  @run-failed-temp
   Scenario: Verify 'Change video' replaces the embedded lesson video
     Given User is on the lesson editor with an existing video attached
     When Click 'Change video' under the video thumbnail
@@ -36,6 +39,7 @@ Feature: TED-Ed Lesson Editor — exploratory coverage (TC-051 to TC-100)
     Then The lesson's embedded video is replaced with the new video, and the new thumbnail/title appears in the editor
 
   @TC-054 @lesson-editor-video @medium @positive
+  @run-failed-temp
   Scenario: Verify 'Crop video' opens a crop tool and applies trim points
     Given User is on the lesson editor with an existing video attached
     When Click 'Crop video' under the video thumbnail
@@ -54,6 +58,7 @@ Feature: TED-Ed Lesson Editor — exploratory coverage (TC-051 to TC-100)
     Then A 'Status' modal opens stating the lesson is currently draft, explaining the unique URL behavior and that the page is not search-indexed
 
   @TC-056 @lesson-editor-status @low @positive
+  @run-failed-temp
   Scenario: Verify Status modal closes via the X button
     Given The Status modal is open
     When Click the 'X' icon in the top-right of the Status modal
@@ -70,6 +75,7 @@ Feature: TED-Ed Lesson Editor — exploratory coverage (TC-051 to TC-100)
     Then A 'Your lesson has been published successfully' modal appears, and the Status badge updates from DRAFT to PUBLISHED
 
   @TC-058 @lesson-editor-publish @medium @positive
+  @run-failed-temp
   Scenario: Verify 'See your lesson' link in the publish-success modal opens the live lesson
     Given Lesson was just published and the success modal is visible
     When Click the 'See your lesson' link inside the success modal
@@ -84,6 +90,7 @@ Feature: TED-Ed Lesson Editor — exploratory coverage (TC-051 to TC-100)
     Then Students are prompted to log in with a TED-Ed account before they can save any responses on the lesson page
 
   @TC-060 @lesson-editor-publish @high @positive
+  @run-failed-temp
   Scenario: Verify selecting 'Don't require students to use TED-Ed accounts' allows nickname access
     Given Lesson has just been published; the access-options modal is visible
     When Select the 'Don't require students to use TED-Ed accounts' radio option
@@ -92,6 +99,7 @@ Feature: TED-Ed Lesson Editor — exploratory coverage (TC-051 to TC-100)
     Then Students can create a simple nickname (no TED-Ed account required) and successfully submit responses on the lesson page
 
   @TC-061 @lesson-editor-publish @medium @positive
+  @run-failed-temp
   Scenario: Verify 'Share your lesson' produces a usable shareable link
     Given The publish-success/access-options modal is visible
     When Click 'Share your lesson'
@@ -103,6 +111,7 @@ Feature: TED-Ed Lesson Editor — exploratory coverage (TC-051 to TC-100)
   # Module: Lesson Editor - Settings
   # ---------------------------------------------------------------
   @TC-062 @lesson-editor-settings @high @positive
+  @run-failed-temp
   Scenario: Verify the Settings modal opens from the 'Customization On/Off' link
     Given User is on the lesson editor page
     When Click the 'Customization On' (or 'Customization Off') link next to Settings
@@ -117,6 +126,7 @@ Feature: TED-Ed Lesson Editor — exploratory coverage (TC-051 to TC-100)
     Then The 'Discuss' section no longer appears on the lesson's public-facing page, while other checked modules remain visible
 
   @TC-064 @lesson-editor-settings @medium @edge
+  @run-failed-temp
   Scenario: Verify behavior when all Module settings checkboxes are unchecked
     Given Settings modal is open; all four module checkboxes (Think, Dig Deeper, Discuss, And Finally) are checked
     When Uncheck Think, Dig Deeper, Discuss, and And Finally
@@ -124,6 +134,7 @@ Feature: TED-Ed Lesson Editor — exploratory coverage (TC-051 to TC-100)
     Then The system either prevents saving with zero modules selected (validation message) or saves successfully and shows only the 'Let's Begin' section on the live page; behavior should be consistent and not error out
 
   @TC-065 @lesson-editor-settings @medium @positive
+  @run-failed-temp
   Scenario: Verify 'Make my lesson customizable' checkbox controls the 'Customize this lesson' button
     Given Settings modal is open; lesson is published
     When Check 'Make my lesson customizable' in Sharing settings
@@ -132,6 +143,7 @@ Feature: TED-Ed Lesson Editor — exploratory coverage (TC-051 to TC-100)
     Then The 'Customize this lesson' button is visible on the public lesson page, allowing other users to create a copy of the lesson
 
   @TC-066 @lesson-editor-settings @medium @positive
+  @run-failed-temp
   Scenario: Verify unchecking 'Make my lesson customizable' hides the customize option
     Given Lesson is currently set to customizable ('Customization On')
     When Open Settings, uncheck 'Make my lesson customizable'
@@ -140,6 +152,7 @@ Feature: TED-Ed Lesson Editor — exploratory coverage (TC-051 to TC-100)
     Then The 'Customize this lesson' button no longer appears on the public lesson page, and the editor shows 'Customization Off'
 
   @TC-067 @lesson-editor-settings @medium @negative
+  @run-failed-temp
   Scenario: Verify 'Cancel' in the Settings modal discards unsaved changes
     Given Settings modal is open with default checkbox states
     When Change one or more checkboxes/radio selections
@@ -155,6 +168,7 @@ Feature: TED-Ed Lesson Editor — exploratory coverage (TC-051 to TC-100)
     Then The modal closes, a 'Lesson settings updated' toast/snackbar appears, and the new setting persists after page refresh
 
   @TC-069 @lesson-editor-settings @high @positive
+  @run-failed-temp
   Scenario: Verify switching Student settings from 'Require accounts' to 'Don't require accounts' updates existing published lesson
     Given Lesson is published with 'Require students to use TED-Ed accounts' enabled
     When Open Settings, select 'Don't require students to use TED-Ed accounts'
@@ -166,6 +180,7 @@ Feature: TED-Ed Lesson Editor — exploratory coverage (TC-051 to TC-100)
   # Module: Lesson Editor - Tags
   # ---------------------------------------------------------------
   @TC-070 @lesson-editor-tags @medium @positive
+  @run-failed-temp
   Scenario: Verify a tag can be added via the 'Add tags...' field
     Given User is on the lesson editor; Tags section is visible
     When Click into the 'Add tags...' input
@@ -181,6 +196,7 @@ Feature: TED-Ed Lesson Editor — exploratory coverage (TC-051 to TC-100)
     Then The tag is removed from the Tags list and no longer appears after refreshing the page
 
   @TC-072 @lesson-editor-tags @low @positive
+  @run-failed-temp
   Scenario: Verify the Tags gear/settings icon opens tag configuration options
     Given User is on the lesson editor; Tags section is visible
     When Click the gear icon next to 'Tags'
@@ -199,6 +215,7 @@ Feature: TED-Ed Lesson Editor — exploratory coverage (TC-051 to TC-100)
   # Module: Lesson Editor - Navigation
   # ---------------------------------------------------------------
   @TC-074 @lesson-editor-navigation @medium @positive
+  @run-failed-temp
   Scenario: Verify the side anchor/jump menu scrolls to the correct section
     Given User is on the lesson editor page with all sections (Summary, Let's Begin, Think, Dig Deeper, Discussions, And Finally, Settings) present
     When Open the anchor/jump navigation menu
@@ -209,6 +226,7 @@ Feature: TED-Ed Lesson Editor — exploratory coverage (TC-051 to TC-100)
   # Module: Lesson Editor - Publish Controls
   # ---------------------------------------------------------------
   @TC-075 @lesson-editor-publish-controls @medium @positive
+  @run-failed-temp
   Scenario: Verify the '...' (more options) menu next to Publish offers relevant actions
     Given User is on the lesson editor for a draft or published lesson
     When Click the circular '...' icon next to the 'Publish' button
@@ -235,6 +253,7 @@ Feature: TED-Ed Lesson Editor — exploratory coverage (TC-051 to TC-100)
     Then The card displays the correct thumbnail, view count, 'Created' date, title, discussion count, and a 'Review student work' link; the 'Published Lessons' count matches the number of published lessons
 
   @TC-078 @your-lessons @medium @positive
+  @run-failed-temp
   Scenario: Verify the discussion count updates after a student discussion is submitted
     Given A published lesson currently shows '0 Discussions'
     When As a student/test account, open the lesson's Discuss section and submit a comment
@@ -242,12 +261,14 @@ Feature: TED-Ed Lesson Editor — exploratory coverage (TC-051 to TC-100)
     Then The discussion count on the lesson card increments to reflect the new submission
 
   @TC-079 @your-lessons @medium @positive
+  @run-failed-temp
   Scenario: Verify 'Review student work' navigates to the student submissions view
     Given A published lesson has at least one student response submitted
     When Click 'Review student work' on the lesson card
     Then The user is taken to a page listing student responses/progress for that specific lesson
 
   @TC-080 @your-lessons @medium @positive
+  @run-failed-temp
   Scenario: Verify the '...' menu on a lesson card provides management options
     Given A published lesson card is visible on 'Your Lessons'
     When Click the '...' icon on the lesson card
@@ -258,6 +279,7 @@ Feature: TED-Ed Lesson Editor — exploratory coverage (TC-051 to TC-100)
   # Module: Public Lesson Page - Favorites
   # ---------------------------------------------------------------
   @TC-081 @public-lesson-page-favorites @high @positive
+  @run-failed-temp
   Scenario: Verify clicking the heart icon adds a lesson to Favorites
     Given User is viewing a public lesson page and the lesson is not currently favorited
     When Click the heart icon below the video
@@ -266,6 +288,7 @@ Feature: TED-Ed Lesson Editor — exploratory coverage (TC-051 to TC-100)
     Then A 'Lesson added to your favorites collection.' toast appears, the heart icon fills/highlights, and the lesson now appears under Favorites with the count incremented
 
   @TC-082 @public-lesson-page-favorites @high @positive
+  @run-failed-temp
   Scenario: Verify clicking the heart icon again removes the lesson from Favorites
     Given The lesson is currently in the user's Favorites
     When Click the filled heart icon to un-favorite the lesson
@@ -276,12 +299,14 @@ Feature: TED-Ed Lesson Editor — exploratory coverage (TC-051 to TC-100)
   # Module: Public Lesson Page - Collections
   # ---------------------------------------------------------------
   @TC-083 @public-lesson-page-collections @high @positive
+  @run-failed-temp
   Scenario: Verify clicking the add-to-collection icon opens the 'Create new Collection' modal
     Given User is viewing a public lesson page and has no existing collections
     When Click the list/'+' icon (add to collection) below the video
     Then A 'Create new Collection' modal opens with a 'Name' input field and a 'Create & Add' button
 
   @TC-084 @public-lesson-page-collections @medium @edge
+  @run-failed-temp
   Scenario: Verify the collection Name field enforces the 60-character limit with a live counter
     Given The 'Create new Collection' modal is open
     When Type a collection name and observe the counter below the field (e.g. '6/60')
@@ -290,6 +315,7 @@ Feature: TED-Ed Lesson Editor — exploratory coverage (TC-051 to TC-100)
     Then The character counter updates live as text is typed, and input is blocked beyond 60 characters
 
   @TC-085 @public-lesson-page-collections @high @positive
+  @run-failed-temp
   Scenario: Verify creating a collection with a valid name adds the lesson successfully
     Given The 'Create new Collection' modal is open
     When Enter a valid name "Football"
@@ -297,6 +323,7 @@ Feature: TED-Ed Lesson Editor — exploratory coverage (TC-051 to TC-100)
     Then The modal closes, the new collection is created containing the current lesson, and a confirmation indicator updates accordingly
 
   @TC-086 @public-lesson-page-collections @medium @negative
+  @run-failed-temp
   Scenario: Verify attempting to create a collection with an empty name is blocked
     Given The 'Create new Collection' modal is open with the Name field empty
     When Leave the Name field blank
@@ -304,6 +331,7 @@ Feature: TED-Ed Lesson Editor — exploratory coverage (TC-051 to TC-100)
     Then The system shows a validation message and does not create a collection with a blank name
 
   @TC-087 @public-lesson-page-collections @medium @positive
+  @run-failed-temp
   Scenario: Verify a lesson can be added to an already-existing collection
     Given User already has at least one collection created (e.g. 'Football')
     When On a different lesson's public page, click the add-to-collection icon
@@ -314,12 +342,14 @@ Feature: TED-Ed Lesson Editor — exploratory coverage (TC-051 to TC-100)
   # Module: Public Lesson Page - Customize
   # ---------------------------------------------------------------
   @TC-088 @public-lesson-page-customize @medium @positive
+  @run-failed-temp
   Scenario: Verify 'Customize this lesson' creates an editable copy for a customizable lesson
     Given Lesson has 'Make my lesson customizable' enabled and is published
     When Click the 'Customize this lesson' button on the public lesson page
     Then A new draft copy of the lesson is created in the user's own 'Your Lessons', opening in the editor for further customization
 
   @TC-089 @public-lesson-page-customize @low @positive
+  @run-failed-temp
   Scenario: Verify the customize counter increments when a lesson is customized by other users
     Given A customizable, published lesson currently shows a customize counter of '0'
     When From a different user account, click 'Customize this lesson' on the same public lesson
@@ -339,6 +369,7 @@ Feature: TED-Ed Lesson Editor — exploratory coverage (TC-051 to TC-100)
   # Module: Your Library - Favorites
   # ---------------------------------------------------------------
   @TC-091 @your-library-favorites @medium @positive
+  @run-failed-temp
   Scenario: Verify the Favorites tab shows the correct count and items
     Given User has favorited one or more lessons
     When Navigate to 'Your Library' > 'Your Library' tab
@@ -346,6 +377,7 @@ Feature: TED-Ed Lesson Editor — exploratory coverage (TC-051 to TC-100)
     Then The count shown next to 'Favorites' matches the actual number of favorited lesson cards displayed below
 
   @TC-092 @your-library-favorites @medium @positive
+  @run-failed-temp
   Scenario: Verify the empty-state message displays correctly when there are no favorites
     Given User has zero favorited lessons
     When Navigate to 'Your Library'
@@ -356,6 +388,7 @@ Feature: TED-Ed Lesson Editor — exploratory coverage (TC-051 to TC-100)
   # Module: Your Library - Watch Later
   # ---------------------------------------------------------------
   @TC-093 @your-library-watch-later @medium @positive
+  @run-failed-temp
   Scenario: Verify a lesson added to Watch Later appears with correct count
     Given User clicks the 'add to collection'/list icon and selects Watch Later (or an equivalent action) from a lesson page
     When Add a lesson to Watch Later
@@ -373,6 +406,7 @@ Feature: TED-Ed Lesson Editor — exploratory coverage (TC-051 to TC-100)
   # Module: Your Library - Collections
   # ---------------------------------------------------------------
   @TC-095 @your-library-collections @medium @positive
+  @run-failed-temp
   Scenario: Verify 'Collections Created By You' lists a created collection with correct lesson count
     Given User has created at least one collection (e.g. 'Football') containing one lesson
     When Navigate to 'Your Library'
@@ -380,6 +414,7 @@ Feature: TED-Ed Lesson Editor — exploratory coverage (TC-051 to TC-100)
     Then The collection appears with its name and the count of lessons it contains matches what was added
 
   @TC-096 @your-library-collections @medium @positive
+  @run-failed-temp
   Scenario: Verify deleting a collection removes it and shows a confirmation toast
     Given At least one collection exists under 'Collections Created By You'
     When Open the collection's options/menu
@@ -390,6 +425,7 @@ Feature: TED-Ed Lesson Editor — exploratory coverage (TC-051 to TC-100)
   # Module: Your Library - History
   # ---------------------------------------------------------------
   @TC-097 @your-library-history @low @positive
+  @run-failed-temp
   Scenario: Verify 'Lessons History' reflects lessons the user has viewed
     Given User has viewed at least one lesson's public page during this session
     When Navigate to 'Your Library'
@@ -417,6 +453,7 @@ Feature: TED-Ed Lesson Editor — exploratory coverage (TC-051 to TC-100)
   # Module: Create a Collection Page
   # ---------------------------------------------------------------
   @TC-100 @create-a-collection-page @medium @positive
+  @run-failed-temp
   Scenario: Verify lessons can be added to a new collection directly from the 'Create a Collection' page
     Given User has navigated to the 'Create a Collection' page
     When Browse the lesson cards shown on the page
