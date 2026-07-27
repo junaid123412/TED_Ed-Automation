@@ -2,7 +2,7 @@ import { test, expect, BrowserContext } from '@playwright/test';
 import { TedEdLessonPage } from '../src/pages/TedEdLessonPage';
 import { envConfig } from '../src/utils/envConfig';
 
-// test.describe.configure({ mode: 'serial' });
+test.describe.configure({ mode: 'serial' });
 
 test.describe('TED-Ed Lesson Editor — exploratory coverage (TC-051 to TC-100)', () => {
   let mainPage: TedEdLessonPage;
