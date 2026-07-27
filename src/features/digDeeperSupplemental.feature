@@ -10,18 +10,21 @@ Feature: Dig Deeper Supplemental Learning Framework
     And I am on the lesson editor screen
 
   @case34
+  @run-failed-temp
   Scenario: Case 34: Initialize Knowledge Extension Interface
     When I click the timeline step Dig Deeper
     Then the supplemental dialog header should identify the context as "Supplemental info"
     And the content input area should render clearly
 
   @case35
+  @run-failed-temp
   Scenario: Case 35: Payload Bulk Injection Routines
     Given I have opened the Dig Deeper dialog
     When I enter the text "football" in the supplemental field
     Then the supplemental field should display "football"
 
   @case36
+  @run-failed-temp
   Scenario: Case 36: Partial String Selection Automation
     Given I have opened the Dig Deeper dialog
     When I enter the text "football" in the supplemental field
@@ -30,6 +33,7 @@ Feature: Dig Deeper Supplemental Learning Framework
     Then the supplemental text should display as bold
 
   @case37
+  @run-failed-temp
   Scenario: Case 37: System Dialog Interaction Verification
     Given I have opened the Dig Deeper dialog
     When I click the link toolbar option in the supplemental editor
@@ -37,6 +41,7 @@ Feature: Dig Deeper Supplemental Learning Framework
     Then the supplemental editor should restore focus and remain unchanged
 
   @case38
+  @run-failed-temp
   Scenario: Case 38: Confirm Material Additions Saving Routines
     Given I have opened the Dig Deeper dialog
     When I enter the text "football" in the supplemental field
@@ -44,6 +49,7 @@ Feature: Dig Deeper Supplemental Learning Framework
     Then the lesson updated toast message should display
 
   @case39
+  @run-failed-temp
   Scenario: Case 39: Validate Parent Board Layout Displays Data
     Given I have opened the Dig Deeper dialog
     When I enter the text "football" in the supplemental field
