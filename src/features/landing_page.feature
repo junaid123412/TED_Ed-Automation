@@ -7,7 +7,6 @@ Feature: Landing Page and Discovery Extended Scenarios (101-160)
     Given user is an approved Leader
     When they click "Access your resources"
     Then a new tab opens pointing to "Welcome to Hub test" domain
-
   Scenario: 102 - Renew Application Pathway
     Given user is on Student Talks page
     When they click "Renew application"
@@ -27,7 +26,6 @@ Feature: Landing Page and Discovery Extended Scenarios (101-160)
     Given user is on introductory page
     When they click "Let's get started"
     Then Step 1 of 2 should initialize and state tracker reads "Step 1"
-
   Scenario: 106 - Fallback Entity Lookup
     Given user is on Step 1
     When they select "United Arab Emirates" and search for organization "500"
@@ -152,7 +150,6 @@ Feature: Landing Page and Discovery Extended Scenarios (101-160)
     Given application workflow has reached a finalized confirmation status
     When user tries to access Step 2 parameters directly using cached deep URLs
     Then layout router redirects user gracefully back to landing index dashboard
-
   Scenario: 131 - Lessons Navigation Direct
     Given user hovers over header navigation item "Discover"
     When they click "Watch video-based lessons organized by subject and age"
@@ -272,7 +269,6 @@ Feature: Landing Page and Discovery Extended Scenarios (101-160)
     Given user focuses search input box component on header navigation bar
     When they type search query characters matching alphanumeric pattern "where"
     Then suggestion panel popup rows drop down highlighting historical query phrases
-
   Scenario: 155 - Enter-Key Dispatch Matrix
     Given user enters explicitly structured query string "where" into search bar
     When they hit hardware Enter keyboard key to finalize search dispatch sequence
