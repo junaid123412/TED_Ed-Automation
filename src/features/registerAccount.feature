@@ -86,6 +86,7 @@ Feature: Register Account
     Then the "Educator" role should be selected
 
   # TC-219
+  @run-failed-temp
   Scenario: Select topics of interest and edit role in Settings
     When I complete the full signup and account creation
     And I select "Educator" as my role
