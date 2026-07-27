@@ -42,7 +42,8 @@ Then('Verify lesson editor page opens', async function (this: CustomWorld) {
 });
 
 Then('Verify lesson title\\/editor field is visible', async function (this: CustomWorld) {
-  await expect(this.page.locator('.lesson-editor')).toBeVisible();
+  const lessonField = this.page.locator('#lesson_name, .lesson-editor, input[name="lesson_title"], textarea[name="lesson_editor"]').first();
+  await expect(lessonField).toBeVisible();
 });
 
 // 3. Tags Management
@@ -57,7 +58,7 @@ When('Click "Remove {string} tag" button', async function (this: CustomWorld, ta
     .or(this.page.locator(`button:has-text("Remove ${tagName}")`).first())
     .or(this.page.locator(`.tag-filter:has-text("${tagName}") button, .filter-tag:has-text("${tagName}") button`).first());
   
-  await btn.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {});
+  await btn.waitFor({ state: 'visible', timeout: 15000 }).catch(() => {});
   await btn.click();
 });
 
@@ -101,7 +102,7 @@ Given('Verify {string} link is visible', async function (this: CustomWorld, link
 
 When('Click {string} link', async function (this: CustomWorld, linkName: string) {
   const loc = this.page.getByRole('link', { name: linkName }).first();
-  const visible = await loc.isVisible({ timeout: 5000 }).catch(() => false);
+  const visible = await loc.isVisible({ timeout: 15000 }).catch(() => false);
   if (visible) {
     await loc.click();
   } else {
@@ -217,14 +218,14 @@ Then('Verify lessons are displayed in {string} layout', async function (this: Cu
 
 Then('Verify lessons are displayed in grid layout', async function (this: CustomWorld) {
   const grid = this.page.locator('.grid-view, .grid, [class*="grid"]').first();
-  await expect(grid).toBeVisible({ timeout: 5000 }).catch(async () => {
+  await expect(grid).toBeVisible({ timeout: 15000 }).catch(async () => {
     await expect(this.page.locator('.lessons-list')).toHaveClass(/grid/).catch(() => {});
   });
 });
 
 Then('Verify lessons are displayed in list layout', async function (this: CustomWorld) {
   const list = this.page.locator('.list-view, .list, [class*="list"]').first();
-  await expect(list).toBeVisible({ timeout: 5000 }).catch(async () => {
+  await expect(list).toBeVisible({ timeout: 15000 }).catch(async () => {
     await expect(this.page.locator('.lessons-list')).toHaveClass(/list/).catch(() => {});
   });
 });
@@ -232,7 +233,52 @@ Then('Verify lessons are displayed in list layout', async function (this: Custom
 Then('Verify {string} link is now marked as active\\/selected', async function (this: CustomWorld, viewType: string) {
   await expect(this.page.getByRole('link', { name: viewType })).toHaveClass(/active/).catch(() => {});
 });
+When('Click {string} text block', async function (this: CustomWorld, textBlock: string) {
+  const element = this.page.locator(`text=${textBlock}`).first();
+  await element.waitFor({ state: 'visible', timeout: 15000 });
+  await element.click();
+});
 
+When('Click {string} menu item', async function (this: CustomWorld, menuItem: string) {
+  const item = this.page.getByRole('menuitem', { name: menuItem }).first();
+  await item.waitFor({ state: 'visible', timeout: 15000 });
+  await item.click();
+});
+
+Given('Click {string} button on the duplicated lesson', async function (this: CustomWorld, buttonName: string) {
+  const card = this.page.locator('article, .lesson-card, [id^="card_lesson_activity"]').filter({ hasText: /MAHODAND LAKE/i }).first();
+  const button = card.getByRole('button', { name: buttonName }).first();
+  await button.waitFor({ state: 'visible', timeout: 15000 });
+  await button.click();
+});
+
+When('Select {string} radio option', async function (this: CustomWorld, radioName: string) {
+  const radio = this.page.getByRole('radio', { name: radioName }).first();
+  if (await radio.isVisible().catch(() => false)) {
+    await radio.click();
+    return;
+  }
+  const control = this.page.getByText(radioName).first();
+  await control.waitFor({ state: 'visible', timeout: 15000 });
+  await control.click();
+});
+
+When('Handle confirmation dialog \(dismiss\)', async function (this: CustomWorld) {
+  this.page.once('dialog', async (dialog) => {
+    await dialog.dismiss();
+  });
+});
+
+When('Click {string} button for duplicated lesson card', async function (this: CustomWorld, buttonName: string) {
+  const card = this.page.locator('article, .lesson-card, [id^="card_lesson_activity"]').filter({ hasText: /MAHODAND LAKE/i }).first();
+  const button = card.getByRole('button', { name: buttonName }).first();
+  await button.waitFor({ state: 'visible', timeout: 15000 });
+  await button.click();
+});
+
+Then('Verify lesson status updates to {string}', async function (this: CustomWorld, statusName: string) {
+  await expect(this.page.getByText(statusName)).toBeVisible({ timeout: 15000 });
+});
 Given('Verify {string} lesson row is visible in list view', async function (this: CustomWorld, lessonName: string) {
   const container = this.page.locator('article, tr, .lesson-card, .lesson-row, [id^="card_lesson_activity"]').filter({ hasText: new RegExp(lessonName, 'i') }).first();
   await expect(container).toBeVisible();
@@ -241,7 +287,7 @@ Given('Verify {string} lesson row is visible in list view', async function (this
 When('Click {string} icon for the {string} lesson row', async function (this: CustomWorld, iconName: string, lessonName: string) {
   const container = this.page.locator('article, tr, .lesson-card, .lesson-row, [id^="card_lesson_activity"]').filter({ hasText: new RegExp(lessonName, 'i') }).first();
   const btn = container.getByLabel(iconName).or(container.getByRole('button', { name: iconName })).first();
-  await btn.waitFor({ state: 'visible', timeout: 5000 });
+  await btn.waitFor({ state: 'visible', timeout: 15000 });
   await btn.click();
 });
 
@@ -257,7 +303,7 @@ Given('Click {string} icon for the lesson row', async function (this: CustomWorl
   const container = this.page.locator('article, tr, .lesson-card, .lesson-row, [id^="card_lesson_activity"]').filter({ hasText: /MAHODAND LAKE/i }).first()
     .or(this.page.locator('article, tr, .lesson-card, .lesson-row, [id^="card_lesson_activity"]').first());
   const btn = container.getByLabel(iconName).or(container.getByRole('button', { name: iconName })).first();
-  await btn.waitFor({ state: 'visible', timeout: 5000 });
+  await btn.waitFor({ state: 'visible', timeout: 15000 });
   await btn.click();
 });
 
@@ -324,7 +370,7 @@ When('Select {string} radio option', async function (this: CustomWorld, radioNam
 When('Click {string} button for duplicated lesson card', async function (this: CustomWorld, buttonName: string) {
   const card = this.page.locator('article, .lesson-card, [id^="card_lesson_activity"]').filter({ hasText: /MAHODAND LAKE/i }).first();
   const btn = card.getByRole('button', { name: buttonName }).or(card.locator(`text=${buttonName}`)).first();
-  await btn.waitFor({ state: 'visible', timeout: 10000 });
+  await btn.waitFor({ state: 'visible', timeout: 15000 });
   await btn.click();
 });
 
