@@ -1,0 +1,21 @@
+# Ignored files and folders
+node_modules/
+dist/
+test-results/
+allure-results/
+reports/
+.antigravitycli/
+.vscode/
+
+# Ignore local scripts, log files, and HTML dumps
+*.log
+*.html
+scratch/
+
+# Credentials and sensitive memory files
+.env
+.env.local
+.env.development
+.env.staging
+.env.production
+memory.md
