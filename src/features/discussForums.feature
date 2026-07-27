@@ -10,6 +10,7 @@ Feature: Discuss Interactive Forums Module
     And I am on the lesson editor screen
 
   @case40
+  @run-failed-temp
   Scenario: Case 40: Launch Forum Creation Form Panel
     When I click the Discuss section button
     And I click the Add discussion option
@@ -17,18 +18,21 @@ Feature: Discuss Interactive Forums Module
     And the discussion prompt fields should render correctly
 
   @case41
+  @run-failed-temp
   Scenario: Case 41: Formulate Discussion Prompt Entries
     Given I have opened the Discussion dialog
     When I type "football" into the discussion prompt field
     Then the discussion prompt field should contain the text "football"
 
   @case42
+  @run-failed-temp
   Scenario: Case 42: Populate Optional Forum Details Field Elements
     Given I have opened the Discussion dialog
     When I type "football" into the discussion description field
     Then the discussion description field should contain the text "football"
 
   @case43
+  @run-failed-temp
   Scenario: Case 43: Commit Forum Topic Configuration Entries
     Given I have opened the Discussion dialog
     And I have typed "football" into the prompt field
@@ -37,6 +41,7 @@ Feature: Discuss Interactive Forums Module
     Then a confirmation message "Discussion was successfully created" should appear
 
   @case44
+  @run-failed-temp
   Scenario: Case 44: Forum Row Data Verification Check
     Given I have saved a Discussion with prompt "football"
     Then the discussion list in the Discuss section should display the prompt "football"
