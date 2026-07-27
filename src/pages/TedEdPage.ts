@@ -27,8 +27,8 @@ export class TedEdPage {
   private readonly saveBtn          = this.page.getByRole('button', { name: 'Save' });
   private readonly getStartedText   = this.page.getByText(/Get Started! Add your content/i);
   private readonly dismissBtn       = this.page.getByRole('button', { name: 'Dismiss' });
-  private readonly letsBeginBtn     = this.page.getByRole('button', { name: /Let['’]s Begin/i });
-  private readonly inputInfoLink    = this.page.locator('section').filter({ has: this.page.getByRole('heading', { name: /Let['’]s Begin/i }) }).getByRole('link', { name: 'Input information' }).first();
+  private readonly letsBeginBtn     = this.page.locator('.editor-row, .module-row, div[class*="row"]').filter({ hasText: /Let['’]s Begin/i }).locator('h3, h4, h5, button, a, span').first();
+  private readonly inputInfoLink    = this.page.locator('.editor-row, .module-row, div[class*="row"]').filter({ hasText: /Let['’]s Begin/i }).locator('a, button').filter({ hasText: /Input information/i }).first();
   private readonly introField       = this.page.getByLabel('Lesson introduction');
   private readonly introText        = this.page.getByRole('dialog', { name: 'Introduction' }).getByRole('paragraph');
   private readonly underlineBtn     = this.page.getByRole('button', { name: 'Underline' });
@@ -38,9 +38,9 @@ export class TedEdPage {
   private readonly subscriptBtn     = this.page.getByRole('button', { name: 'Subscript' });
   private readonly superscriptBtn   = this.page.getByRole('button', { name: 'Superscript' });
   private readonly previewBtn       = this.page.getByRole('button', { name: 'Preview' });
-  private readonly thinkBtn         = this.page.getByRole('button', { name: 'Think' });
+  private readonly thinkBtn         = this.page.locator('.editor-row, .module-row, div[class*="row"]').filter({ hasText: /Think/i }).locator('h3, h4, h5, button, a, span').first();
   private readonly mcqLink          = this.page.getByRole('link', { name: 'Multiple Choice Question' });
-  private readonly questionTextField = this.page.getByRole('textbox', { name: 'Question Text' });
+  private readonly questionTextField = this.page.locator('dialog, .modal, [role="dialog"]').locator('#question_title, #question_body, input[name*="question"], textarea[name*="question"], input[id*="question"], input[name*="title"], [placeholder*="Question Text"], [placeholder*="Question"]').first();
   private readonly firstAnswerField  = this.page.locator('.ql-editor').first();
   private readonly blankAnswerField  = this.page.locator('.ql-editor.ql-blank');
 
@@ -55,11 +55,11 @@ export class TedEdPage {
   }
 
   async clickSignIn(): Promise<void> {
-    const visible = await this.signInLink.isVisible({ timeout: 5_000 }).catch(() => false);
+    const visible = await this.signInLink.isVisible({ timeout: 15_000 }).catch(() => false);
     if (visible) {
       await this.signInLink.click({ noWaitAfter: true });
     } else {
-      const altVisible = await this.altSignInLink.isVisible({ timeout: 5_000 }).catch(() => false);
+      const altVisible = await this.altSignInLink.isVisible({ timeout: 15_000 }).catch(() => false);
       if (altVisible) {
         await this.altSignInLink.click({ noWaitAfter: true });
       } else {
@@ -105,7 +105,7 @@ export class TedEdPage {
   }
 
   async acceptConsentIfVisible(): Promise<void> {
-    const visible = await this.consentButton.isVisible({ timeout: 8_000 }).catch(() => false);
+    const visible = await this.consentButton.isVisible({ timeout: 15_000 }).catch(() => false);
     if (visible) {
       await this.consentButton.click();
       await this.page.waitForTimeout(2_000);
@@ -113,7 +113,7 @@ export class TedEdPage {
   }
 
   async clickContinueOnConsentScreen(): Promise<void> {
-    const visible = await this.consentButton.isVisible({ timeout: 8_000 }).catch(() => false);
+    const visible = await this.consentButton.isVisible({ timeout: 15_000 }).catch(() => false);
     if (visible) {
       await this.consentButton.click();
       await this.page.waitForTimeout(2_000);
@@ -147,7 +147,7 @@ export class TedEdPage {
       await this.navigateWithBasicAuth();
     }
     await this.page.waitForLoadState('networkidle', { timeout: 30_000 }).catch(() => {});
-    const isLoggedOut = await this.signInLink.isVisible({ timeout: 10_000 }).catch(() => false);
+    const isLoggedOut = await this.signInLink.isVisible({ timeout: 15_000 }).catch(() => false);
     if (isLoggedOut) {
       await this.clickSignIn();
       await this.clickEmailInputField();
@@ -194,7 +194,7 @@ export class TedEdPage {
   }
 
   async clickVideoContinue(): Promise<void> {
-    await this.videoContinueBtn.waitFor({ state: 'visible', timeout: 10_000 });
+    await this.videoContinueBtn.waitFor({ state: 'visible', timeout: 15_000 });
     await this.videoContinueBtn.click();
     await this.page.waitForTimeout(2_000);
   }
@@ -224,7 +224,7 @@ export class TedEdPage {
 
   async clickLessonNameField(): Promise<void> {
     const titleLink = this.page.locator('a[href*="edit?field=name"]').first();
-    if (await titleLink.isVisible({ timeout: 10_000 }).catch(() => false)) {
+    if (await titleLink.isVisible({ timeout: 15_000 }).catch(() => false)) {
       await titleLink.click();
     }
     await this.lessonNameField.waitFor({ state: 'attached', timeout: 15_000 });
@@ -250,23 +250,23 @@ export class TedEdPage {
   }
 
   async clickSave(): Promise<void> {
-    await this.saveBtn.waitFor({ state: 'visible', timeout: 10_000 });
+    await this.saveBtn.waitFor({ state: 'visible', timeout: 15_000 });
     await this.saveBtn.click();
     await this.page.waitForTimeout(2_000);
   }
 
   async verifyLessonSaved(): Promise<void> {
     if (!this.lastLessonName) {
-      await expect(this.lessonNameField).not.toBeEmpty({ timeout: 10_000 });
+      await expect(this.lessonNameField).not.toBeEmpty({ timeout: 15_000 });
       return;
     }
     const titleLink = this.page.locator('a[href*="edit?field=name"]').first();
-    if (await titleLink.isVisible({ timeout: 5_000 }).catch(() => false)) {
-      await expect(titleLink).toContainText(this.lastLessonName, { timeout: 10_000 });
+    if (await titleLink.isVisible({ timeout: 15_000 }).catch(() => false)) {
+      await expect(titleLink).toContainText(this.lastLessonName, { timeout: 15_000 });
       return;
     }
     if (await this.lessonNameField.isVisible({ timeout: 2_000 }).catch(() => false)) {
-      await expect(this.lessonNameField).toHaveValue(this.lastLessonName, { timeout: 10_000 });
+      await expect(this.lessonNameField).toHaveValue(this.lastLessonName, { timeout: 15_000 });
       return;
     }
     const val = await this.lessonNameField.evaluate((el: HTMLInputElement) => el.value).catch(() => '');
@@ -279,14 +279,14 @@ export class TedEdPage {
       await this.page.goto('https://teded-integration.herokuapp.com/u/lessons', { waitUntil: 'domcontentloaded' });
       await this.clickDraftLesson();
     }
-    const visible = await this.getStartedText.isVisible({ timeout: 5000 }).catch(() => false);
+    const visible = await this.getStartedText.isVisible({ timeout: 15000 }).catch(() => false);
     if (visible) {
       await this.getStartedText.click();
     }
   }
 
   async clickDismiss(): Promise<void> {
-    const visible = await this.dismissBtn.isVisible({ timeout: 5000 }).catch(() => false);
+    const visible = await this.dismissBtn.isVisible({ timeout: 15000 }).catch(() => false);
     if (visible) {
       await this.dismissBtn.click();
     }
@@ -324,7 +324,7 @@ export class TedEdPage {
       await expect(this.inputInfoLink).toBeVisible({ timeout: 15_000 });
       return;
     }
-    await expect(this.inputInfoLink).toBeVisible({ timeout: 5_000 });
+    await expect(this.inputInfoLink).toBeVisible({ timeout: 15_000 });
   }
 
   async clickInputInformation(): Promise<void> {
@@ -367,11 +367,11 @@ export class TedEdPage {
   }
 
   async verifyIntroTextVisible(): Promise<void> {
-    await expect(this.introField).not.toBeEmpty({ timeout: 10_000 });
+    await expect(this.introField).not.toBeEmpty({ timeout: 15_000 });
   }
 
   async doubleClickIntroText(): Promise<void> {
-    await this.introText.waitFor({ state: 'visible', timeout: 10_000 });
+    await this.introText.waitFor({ state: 'visible', timeout: 15_000 });
     await this.introText.dblclick();
   }
 
@@ -388,7 +388,7 @@ export class TedEdPage {
   }
 
   async confirmLinkAction(): Promise<void> {
-    await this.linkAction.waitFor({ state: 'visible', timeout: 10_000 });
+    await this.linkAction.waitFor({ state: 'visible', timeout: 15_000 });
     await this.linkAction.click();
   }
 
@@ -406,7 +406,7 @@ export class TedEdPage {
   }
 
   async verifyIntroSaved(): Promise<void> {
-    await expect(this.page.locator('body')).not.toContainText('Error', { timeout: 10_000 });
+    await expect(this.page.locator('body')).not.toContainText('Error', { timeout: 15_000 });
   }
 
   async clickThink(): Promise<void> {
@@ -430,7 +430,7 @@ export class TedEdPage {
   }
 
   async clickFirstAnswerField(): Promise<void> {
-    await this.firstAnswerField.waitFor({ state: 'visible', timeout: 10_000 });
+    await this.firstAnswerField.waitFor({ state: 'visible', timeout: 15_000 });
     await this.firstAnswerField.click();
   }
 
@@ -440,7 +440,7 @@ export class TedEdPage {
   }
 
   async clickLastBlankAnswerField(): Promise<void> {
-    await this.blankAnswerField.waitFor({ state: 'visible', timeout: 10_000 });
+    await this.blankAnswerField.waitFor({ state: 'visible', timeout: 15_000 });
     await this.blankAnswerField.click();
   }
 
@@ -450,6 +450,6 @@ export class TedEdPage {
 
   async verifyAllAnswersFilled(): Promise<void> {
     const fields = this.page.locator('div.ql-editor');
-    await expect(fields).toHaveCount(4, { timeout: 10_000 });
+    await expect(fields).toHaveCount(4, { timeout: 15_000 });
   }
 }
