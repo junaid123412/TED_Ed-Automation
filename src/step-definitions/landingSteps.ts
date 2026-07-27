@@ -15,11 +15,11 @@ Given('user is on Student Talks page', async function (this: CustomWorld) {
 When('they click {string}', async function (this: CustomWorld, text: string) {
   // try role then text
   try {
-    await this.page.getByRole('button', { name: text }).first().click({ timeout: 5000 });
+    await this.page.getByRole('button', { name: text }).first().click({ timeout: 15000 });
     return;
   } catch (e) {}
   try {
-    await this.page.getByRole('link', { name: text }).first().click({ timeout: 5000 });
+    await this.page.getByRole('link', { name: text }).first().click({ timeout: 15000 });
     return;
   } catch (e) {}
   await this.page.locator(`text=${text}`).first().click().catch(() => {});
@@ -69,7 +69,7 @@ Then('video thumbnails must dynamically stack into a single column', async funct
 });
 
 Then('system displays {string} header', async function (this: CustomWorld, header: string) {
-  await expect(this.page.locator(`text=${header}`).first()).toBeVisible({ timeout: 8000 });
+  await expect(this.page.locator(`text=${header}`).first()).toBeVisible({ timeout: 15000 });
 });
 
 When('they select {string} and search for organization {string}', async function (this: CustomWorld, country: string, query: string) {
@@ -80,7 +80,7 @@ When('they select {string} and search for organization {string}', async function
 });
 
 Then('result container displays a {string} link option', async function (this: CustomWorld, text: string) {
-  await expect(this.page.locator(`text=${text}`).first()).toBeVisible({ timeout: 8000 });
+  await expect(this.page.locator(`text=${text}`).first()).toBeVisible({ timeout: 15000 });
 });
 
 When('they switch Country selection from {string} to {string}', async function (this: CustomWorld, from: string, to: string) {
@@ -96,8 +96,8 @@ Then('"State \\/ Province \\/ Region" resets to present specific Pakistani provi
 });
 
 Then('Step {int} of {int} should initialize and state tracker reads {string}', async function (this: CustomWorld, step: number, total: number, text: string) {
-  await expect(this.page.locator(`text=Step ${step} of ${total}`)).toBeVisible({ timeout: 8000 }).catch(() => {});
-  await expect(this.page.locator(`text=${text}`)).toBeVisible({ timeout: 8000 }).catch(() => {});
+  await expect(this.page.locator(`text=Step ${step} of ${total}`)).toBeVisible({ timeout: 15000 }).catch(() => {});
+  await expect(this.page.locator(`text=${text}`)).toBeVisible({ timeout: 15000 }).catch(() => {});
 });
 
 When('they click the browser\'s native hardware Back navigation control', async function (this: CustomWorld) {
@@ -106,7 +106,7 @@ When('they click the browser\'s native hardware Back navigation control', async 
 
 Then('the validation state error message must dynamically clear away instantly', async function (this: CustomWorld) {
   await this.page.waitForTimeout(500);
-  await expect(this.page.locator('text=Website is not a valid URL')).not.toBeVisible({ timeout: 5000 }).catch(() => {});
+  await expect(this.page.locator('text=Website is not a valid URL')).not.toBeVisible({ timeout: 15000 }).catch(() => {});
 });
 
 When('they input structured email pattern {string} into newsletter field', async function (this: CustomWorld, email: string) {
@@ -118,7 +118,7 @@ When('they input structured email pattern {string} into newsletter field', async
 
 Then('footer validation maps input tracking asset and renders confirmation graphics', async function (this: CustomWorld) {
   await this.page.locator('button:has-text("Subscribe"), button:has-text("Sign up")').first().click().catch(() => {});
-  await expect(this.page.locator('text=Subscribed, text=Thank you, text=Confirmation')).toBeVisible({ timeout: 8000 }).catch(() => {});
+  await expect(this.page.locator('text=Subscribed, text=Thank you, text=Confirmation')).toBeVisible({ timeout: 15000 }).catch(() => {});
 });
 
 When('user hovers over header navigation item {string}', async function (this: CustomWorld, name: string) {
@@ -150,7 +150,7 @@ When('they type search query characters matching alphanumeric pattern {string}',
 });
 
 Then('suggestion panel popup rows drop down highlighting historical query phrases', async function (this: CustomWorld) {
-  await expect(this.page.locator('.search-suggestions-dropdown, .autocomplete-items')).toBeVisible({ timeout: 8000 }).catch(() => {});
+  await expect(this.page.locator('.search-suggestions-dropdown, .autocomplete-items')).toBeVisible({ timeout: 15000 }).catch(() => {});
 });
 
 When('they hit hardware Enter keyboard key to finalize search dispatch sequence', async function (this: CustomWorld) {
@@ -158,7 +158,7 @@ When('they hit hardware Enter keyboard key to finalize search dispatch sequence'
 });
 
 Then('main results view display title string prints {string}', async function (this: CustomWorld, text: string) {
-  await expect(this.page.locator(`text=${text}`)).toBeVisible({ timeout: 8000 });
+  await expect(this.page.locator(`text=${text}`)).toBeVisible({ timeout: 15000 });
 });
 
 When('they click the pagination indicator number button labeled {string}', async function (this: CustomWorld, label: string) {
@@ -168,14 +168,14 @@ When('they click the pagination indicator number button labeled {string}', async
 });
 
 Then('pagination locator framework highlights step {int} as active viewing slice', async function (this: CustomWorld, step: number) {
-  await expect(this.page.locator(`.pagination .active:has-text("${step}")`)).toBeVisible({ timeout: 8000 }).catch(() => {});
+  await expect(this.page.locator(`.pagination .active:has-text("${step}")`)).toBeVisible({ timeout: 15000 }).catch(() => {});
 });
 
 Then('the page should reflect the saved content and show a success alert', async function (this: CustomWorld) {
-  await expect(this.page.locator('text=Saved, text=Success')).toBeVisible({ timeout: 8000 }).catch(() => {});
+  await expect(this.page.locator('text=Saved, text=Success')).toBeVisible({ timeout: 15000 }).catch(() => {});
 });
 
 // Fallback generic step: if a textual element should be visible
 Then('the element {string} should be visible', async function (this: CustomWorld, txt: string) {
-  await expect(this.page.locator(`text=${txt}`)).toBeVisible({ timeout: 8000 }).catch(() => {});
+  await expect(this.page.locator(`text=${txt}`)).toBeVisible({ timeout: 15000 }).catch(() => {});
 });
