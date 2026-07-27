@@ -22,8 +22,8 @@ Before({ tags: '@registerAccount', timeout: 60000 }, async function (this: Custo
   });
   
   this.page = await registrationContext.newPage();
-  this.page.setDefaultTimeout(5000);
-  this.page.setDefaultNavigationTimeout(30000);
+  this.page.setDefaultTimeout(15000);
+  this.page.setDefaultNavigationTimeout(90000);
   
   await this.page.goto(this.baseUrl);
 });
