@@ -18,8 +18,9 @@ Feature: Publishing and State Transitions Module
   Scenario: Case 49: Execute Lesson Publishing Commands Flow
     When I click the primary red Publish button
     Then the lesson published confirmation dialog should appear with share options
-
+    
   @case50
+  @run-failed-temp
   Scenario: Case 50: Dashboard Status Verification Routines
     Given I have clicked the primary red Publish button
     When I close the share lesson confirmation modal
