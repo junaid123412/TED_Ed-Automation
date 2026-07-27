@@ -10,24 +10,28 @@ Feature: Think Assessment Builder - Multiple Choice Questions
     And I am on the lesson editor screen
 
   @case22
+  @run-failed-temp
   Scenario: Case 22: Open Question Management Matrix
     When I click on the Think section button
     And I click the Multiple Choice Question option
     Then the multiple choice question editor form should mount to the UI
 
   @case23
+  @run-failed-temp
   Scenario: Case 23: Insert Dynamic Automated Source Data Into Fields
     Given I have opened the Multiple Choice Question editor
     When I type the question text "football"
     Then the question text field should display the text "football"
 
   @case24
+  @run-failed-temp
   Scenario: Case 24: Add First Answer Response Option Variant
     Given I have opened the Multiple Choice Question editor
     When I type "football" into answer option A
     Then answer option A should display the text "football"
 
   @case25
+  @run-failed-temp
   Scenario: Case 25: Populate Alternate Variable Option Elements
     Given I have opened the Multiple Choice Question editor
     When I type "football" into answer option B
@@ -36,12 +40,14 @@ Feature: Think Assessment Builder - Multiple Choice Questions
     And answer option C should display "football"
 
   @case26
+  @run-failed-temp
   Scenario: Case 26: Expand Option Range Context Limits
     Given I have opened the Multiple Choice Question editor
     When I click the Add another answer button
     Then an additional answer option field E should register dynamically
 
   @case27
+  @run-failed-temp
   Scenario: Case 27: Prune Extraneous Option Content Paths
     Given I have opened the Multiple Choice Question editor
     And I have clicked the Add another answer button to add option E
@@ -49,6 +55,7 @@ Feature: Think Assessment Builder - Multiple Choice Questions
     Then option E should be removed from the form
 
   @case28
+  @run-failed-temp
   Scenario: Case 28: Configure Video Hint Timecodes
     Given I have opened the Multiple Choice Question editor
     When I clear the video hint field
@@ -56,6 +63,7 @@ Feature: Think Assessment Builder - Multiple Choice Questions
     Then the video hint field should display "00:52"
 
   @case29
+  @run-failed-temp
   Scenario: Case 29: Persist Multiple Choice Configuration Definitions
     Given I have opened the Multiple Choice Question editor
     And I have filled the question text with "football"
@@ -64,6 +72,7 @@ Feature: Think Assessment Builder - Multiple Choice Questions
     Then a confirmation message "Question was successfully created" should appear
 
   @case30
+  @run-failed-temp
   Scenario: Case 30: Assert Question Array Render List Structures
     Given I have saved a Multiple Choice Question with text "football"
     Then the question list in the Think section should display the question text "football"
