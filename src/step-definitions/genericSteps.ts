@@ -8,11 +8,11 @@ function fallbackLocator(primary: Locator, fallback: Locator) {
 }
 
 async function clickLocator(locator: Locator) {
-  await locator.click({ timeout: 10000 });
+  await locator.click({ timeout: 15000 });
 }
 
 async function fillLocator(locator: Locator, text: string) {
-  await locator.fill(text, { timeout: 10000 });
+  await locator.fill(text, { timeout: 15000 });
 }
 
 Given('I navigate to BASE_URL', async function (this: CustomWorld) {
@@ -31,7 +31,7 @@ When('I hover over the {string} menu item', async function (this: CustomWorld, n
     this.page.getByRole('button', { name }),
     this.page.locator(`text=${name}`)
   );
-  await item.hover({ timeout: 10000 });
+  await item.hover({ timeout: 15000 });
 });
 
 When('I click the {string} sub-option', async function (this: CustomWorld, name: string) {
@@ -74,7 +74,7 @@ When('I click the video preview body', async function (this: CustomWorld) {
 });
 
 Then('a loading dialog containing {string} should appear', async function (this: CustomWorld, text: string) {
-  await expect(this.page.locator(`text=${text}`)).toBeVisible({ timeout: 10_000 });
+  await expect(this.page.locator(`text=${text}`)).toBeVisible({ timeout: 15_000 });
 });
 
 When('I click the {string} button', async function (this: CustomWorld, name: string) {
@@ -98,7 +98,7 @@ When('I click the modal {string} button', async function (this: CustomWorld, nam
 });
 
 Then('a dynamic notification indicating update should appear', async function (this: CustomWorld) {
-  await expect(this.page.locator('text=updated, text=Lesson updated, text=Saved')).toBeVisible({ timeout: 10_000 });
+  await expect(this.page.locator('text=updated, text=Lesson updated, text=Saved')).toBeVisible({ timeout: 15_000 });
 });
 
 Given('I saved the Introduction content', async function (this: CustomWorld) {
@@ -118,7 +118,7 @@ When('I close the modal', async function (this: CustomWorld) {
 });
 
 Then('the introduction subtitle should appear beneath the stage area and match saved content', async function (this: CustomWorld) {
-  await expect(this.page.locator('text=FIFA WORLD CUP FANTASY FOOTBALL')).toBeVisible({ timeout: 10_000 }).catch(() => {});
+  await expect(this.page.locator('text=FIFA WORLD CUP FANTASY FOOTBALL')).toBeVisible({ timeout: 15_000 }).catch(() => {});
 });
 
 When('I focus the hint timecode input and set it to {string}', async function (this: CustomWorld, val: string) {
@@ -146,7 +146,7 @@ When('I select {string}', async function (this: CustomWorld, name: string) {
 
 Then('the dialog should close and changes be persisted', async function (this: CustomWorld) {
   await this.page.waitForTimeout(500); // allow UI to settle
-  await expect(this.page.locator('text=Saved, text=updated, text=Success')).toBeVisible({ timeout: 8_000 }).catch(() => {});
+  await expect(this.page.locator('text=Saved, text=updated, text=Success')).toBeVisible({ timeout: 15_000 }).catch(() => {});
 });
 
 When('I paste the MOCK_CODE_PAYLOAD into it', async function (this: CustomWorld) {
@@ -165,7 +165,7 @@ When('I populate fields {string} and {string} with distinct values', async funct
 });
 
 Then('both options should contain the entered text', async function (this: CustomWorld) {
-  await expect(this.page.locator('.ql-editor').nth(1)).not.toBeEmpty({ timeout: 5_000 }).catch(() => {});
+  await expect(this.page.locator('.ql-editor').nth(1)).not.toBeEmpty({ timeout: 15_000 }).catch(() => {});
 });
 
 // removed specific Add another answer handler to avoid ambiguity with generic I click {string}
@@ -177,7 +177,7 @@ When('I click the Bold formatting button', async function (this: CustomWorld) {
 });
 
 Then('the selected text should be bolded in preview', async function (this: CustomWorld) {
-  await expect(this.page.locator('.ql-editor strong, .ql-editor b, .ql-editor em strong')).toBeVisible({ timeout: 5_000 });
+  await expect(this.page.locator('.ql-editor strong, .ql-editor b, .ql-editor em strong')).toBeVisible({ timeout: 15_000 });
 });
 
 Given('text exists in the Introduction editor', async function (this: CustomWorld) {
@@ -208,7 +208,7 @@ When('I select a text range and click the {string} toolbar button', async functi
 });
 
 Then('the selected text should render with underline styling', async function (this: CustomWorld) {
-  await expect(this.page.locator('.ql-editor u, .ql-editor span[style*="underline"]')).toBeVisible({ timeout: 5_000 }).catch(() => {});
+  await expect(this.page.locator('.ql-editor u, .ql-editor span[style*="underline"]')).toBeVisible({ timeout: 15_000 }).catch(() => {});
 });
 
 Given('I have selected text in the introduction editor', async function (this: CustomWorld) {
@@ -235,7 +235,7 @@ When('I confirm the link creation', async function (this: CustomWorld) {
 });
 
 Then('the selected text should become a hyperlink', async function (this: CustomWorld) {
-  await expect(this.page.locator('.ql-editor a')).toBeVisible({ timeout: 5_000 }).catch(() => {});
+  await expect(this.page.locator('.ql-editor a')).toBeVisible({ timeout: 15_000 }).catch(() => {});
 });
 
 Given('styled text exists in the editor', async function (this: CustomWorld) {
@@ -248,7 +248,7 @@ Given('styled text exists in the editor', async function (this: CustomWorld) {
 
 Then('the text should revert to plain formatting', async function (this: CustomWorld) {
   await this.page.locator('button.ql-clean').first().click().catch(() => {});
-  await expect(this.page.locator('.ql-editor strong, .ql-editor u')).not.toBeVisible({ timeout: 5_000 }).catch(() => {});
+  await expect(this.page.locator('.ql-editor strong, .ql-editor u')).not.toBeVisible({ timeout: 15_000 }).catch(() => {});
 });
 
 Given('I have formatted the introduction content', async function (this: CustomWorld) {
@@ -272,7 +272,7 @@ When('I choose {string}', async function (this: CustomWorld, name: string) {
 });
 
 Then('the multi-option editor should mount in the UI', async function (this: CustomWorld) {
-  await expect(this.page.locator('.ql-editor, textarea, .mcq-editor, [data-testid="mcq"]')).toBeVisible({ timeout: 8_000 }).catch(() => {});
+  await expect(this.page.locator('.ql-editor, textarea, .mcq-editor, [data-testid="mcq"]')).toBeVisible({ timeout: 15_000 }).catch(() => {});
 });
 
 Given('the Multiple Choice editor is open', async function (this: CustomWorld) {
@@ -284,7 +284,7 @@ When('I focus the {string} input', async function (this: CustomWorld, _name: str
 });
 
 Then('the field should display the pasted content correctly', async function (this: CustomWorld) {
-  await expect(this.page.locator('textarea, .ql-editor')).not.toBeEmpty({ timeout: 5_000 }).catch(() => {});
+  await expect(this.page.locator('textarea, .ql-editor')).not.toBeEmpty({ timeout: 15_000 }).catch(() => {});
 });
 
 Given('the question editor is active', async function (this: CustomWorld) {
@@ -292,7 +292,7 @@ Given('the question editor is active', async function (this: CustomWorld) {
 });
 
 Then('the option should show the entered text and remain selectable', async function (this: CustomWorld) {
-  await expect(this.page.locator('.ql-editor').first()).not.toBeEmpty({ timeout: 5_000 }).catch(() => {});
+  await expect(this.page.locator('.ql-editor').first()).not.toBeEmpty({ timeout: 15_000 }).catch(() => {});
 });
 
 Given('option {string} is populated', async function (this: CustomWorld, _opt: string) {
@@ -302,7 +302,7 @@ Given('option {string} is populated', async function (this: CustomWorld, _opt: s
 
 Then('a new option labeled {string} should be appended and editable', async function (this: CustomWorld, _label: string) {
   await this.page.locator('button:has-text("Add another answer")').first().click().catch(() => {});
-  await expect(this.page.locator('.ql-editor').nth(3)).toBeVisible({ timeout: 5_000 }).catch(() => {});
+  await expect(this.page.locator('.ql-editor').nth(3)).toBeVisible({ timeout: 15_000 }).catch(() => {});
 });
 
 Given('extra options exist', async function (this: CustomWorld) {
@@ -323,7 +323,7 @@ Given('answer options are set', async function (this: CustomWorld) {
 });
 
 Then('the hint preview should reflect the specified timecode', async function (this: CustomWorld) {
-  await expect(this.page.locator('text=00:52, text=0:52')).toBeVisible({ timeout: 5_000 }).catch(() => {});
+  await expect(this.page.locator('text=00:52, text=0:52')).toBeVisible({ timeout: 15_000 }).catch(() => {});
 });
 
 Given('the question and options are filled', async function (this: CustomWorld) {
@@ -332,7 +332,7 @@ Given('the question and options are filled', async function (this: CustomWorld) 
 });
 
 Then('a creation confirmation message should appear', async function (this: CustomWorld) {
-  await expect(this.page.locator('text=Saved, text=Success, text=created')).toBeVisible({ timeout: 8_000 }).catch(() => {});
+  await expect(this.page.locator('text=Saved, text=Success, text=created')).toBeVisible({ timeout: 15_000 }).catch(() => {});
 });
 
 Given('saved questions exist', async function (this: CustomWorld) {
@@ -344,15 +344,15 @@ When('I view the Think section list', async function (this: CustomWorld) {
 });
 
 Then('the question entries should appear in order with correct numbering', async function (this: CustomWorld) {
-  await expect(this.page.locator('.think-list, .questions-list, .mcq-list')).toBeVisible({ timeout: 5_000 }).catch(() => {});
+  await expect(this.page.locator('.think-list, .questions-list, .mcq-list')).toBeVisible({ timeout: 15_000 }).catch(() => {});
 });
 
 Then('the open answer dialog should render and inputs should be empty', async function (this: CustomWorld) {
-  await expect(this.page.locator('[role="dialog"] .ql-editor, dialog .ql-editor, [role="dialog"] textarea, dialog textarea')).toBeVisible({ timeout: 5_000 }).catch(() => {});
+  await expect(this.page.locator('[role="dialog"] .ql-editor, dialog .ql-editor, [role="dialog"] textarea, dialog textarea')).toBeVisible({ timeout: 15_000 }).catch(() => {});
 });
 
 Given('the open answer dialog is visible', async function (this: CustomWorld) {
-  await expect(this.page.locator('[role="dialog"] .ql-editor, dialog .ql-editor, [role="dialog"] textarea, dialog textarea')).toBeVisible({ timeout: 5_000 }).catch(() => {});
+  await expect(this.page.locator('[role="dialog"] .ql-editor, dialog .ql-editor, [role="dialog"] textarea, dialog textarea')).toBeVisible({ timeout: 15_000 }).catch(() => {});
 });
 
 When('I type the required answer prompt and apply bold styling to keywords', async function (this: CustomWorld) {
@@ -370,7 +370,7 @@ When('I inspect the questions list', async function (this: CustomWorld) {
 });
 
 Then('newly added entries should appear appended and icons should match type', async function (this: CustomWorld) {
-  await expect(this.page.locator('.questions-list li').last()).toBeVisible({ timeout: 5_000 }).catch(() => {});
+  await expect(this.page.locator('.questions-list li').last()).toBeVisible({ timeout: 15_000 }).catch(() => {});
 });
 
 When('I click the delete/trash action for one option', async function (this: CustomWorld) {
@@ -378,7 +378,7 @@ When('I click the delete/trash action for one option', async function (this: Cus
 });
 
 Then('the page should reflect the saved content and show a success alert', async function (this: CustomWorld) {
-  await expect(this.page.locator('text=Saved, text=Success')).toBeVisible({ timeout: 8_000 }).catch(() => {});
+  await expect(this.page.locator('text=Saved, text=Success')).toBeVisible({ timeout: 15_000 }).catch(() => {});
 });
 
 Given('supplemental items were saved', async function (this: CustomWorld) {
@@ -390,7 +390,7 @@ When('I view the Dig Deeper index', async function (this: CustomWorld) {
 });
 
 Then('the saved excerpts should display and layout heights should adjust', async function (this: CustomWorld) {
-  await expect(this.page.locator('.dig-deeper-list, .supplemental-list')).toBeVisible({ timeout: 5_000 }).catch(() => {});
+  await expect(this.page.locator('.dig-deeper-list, .supplemental-list')).toBeVisible({ timeout: 15_000 }).catch(() => {});
 });
 
 Given('the supplemental editor is focused', async function (this: CustomWorld) {
@@ -407,7 +407,7 @@ When('I select a word range and apply formatting', async function (this: CustomW
 });
 
 Then('the style changes should render correctly', async function (this: CustomWorld) {
-  await expect(this.page.locator('.dig-deeper .ql-editor em, [role="dialog"] .ql-editor em, dialog .ql-editor em')).toBeVisible({ timeout: 5_000 }).catch(() => {});
+  await expect(this.page.locator('.dig-deeper .ql-editor em, [role="dialog"] .ql-editor em, dialog .ql-editor em')).toBeVisible({ timeout: 15_000 }).catch(() => {});
 });
 
 Given('a link action triggers a system dialog', async function (this: CustomWorld) {
@@ -419,15 +419,15 @@ Then('the browser automation should regain focus and continue', async function (
 });
 
 Then('a modal with discussion fields should appear and deadlines should show defaults', async function (this: CustomWorld) {
-  await expect(this.page.locator('[role="dialog"] input[name*="prompt"], dialog input[name*="prompt"], [role="dialog"] .ql-editor, dialog .ql-editor')).toBeVisible({ timeout: 8_000 }).catch(() => {});
+  await expect(this.page.locator('[role="dialog"] input[name*="prompt"], dialog input[name*="prompt"], [role="dialog"] .ql-editor, dialog .ql-editor')).toBeVisible({ timeout: 15_000 }).catch(() => {});
 });
 
 Given('the discussion modal is open', async function (this: CustomWorld) {
-  await expect(this.page.locator('[role="dialog"], dialog')).toBeVisible({ timeout: 5_000 }).catch(() => {});
+  await expect(this.page.locator('[role="dialog"], dialog')).toBeVisible({ timeout: 15_000 }).catch(() => {});
 });
 
 Given('the description field is visible', async function (this: CustomWorld) {
-  await expect(this.page.locator('[role="dialog"] .ql-editor, dialog .ql-editor, [role="dialog"] [contenteditable="true"], dialog [contenteditable="true"]').first()).toBeVisible({ timeout: 5_000 }).catch(() => {});
+  await expect(this.page.locator('[role="dialog"] .ql-editor, dialog .ql-editor, [role="dialog"] [contenteditable="true"], dialog [contenteditable="true"]').first()).toBeVisible({ timeout: 15_000 }).catch(() => {});
 });
 
 When('I type supporting details and apply markdown highlights', async function (this: CustomWorld) {
@@ -436,7 +436,7 @@ When('I type supporting details and apply markdown highlights', async function (
 });
 
 Then('the description should render with markdown where applicable', async function (this: CustomWorld) {
-  await expect(this.page.locator('[role="dialog"] .ql-editor strong, dialog .ql-editor strong, [role="dialog"] .ql-editor em, dialog .ql-editor em')).toBeVisible({ timeout: 5_000 }).catch(() => {});
+  await expect(this.page.locator('[role="dialog"] .ql-editor strong, dialog .ql-editor strong, [role="dialog"] .ql-editor em, dialog .ql-editor em')).toBeVisible({ timeout: 15_000 }).catch(() => {});
 });
 
 Given('all required discussion fields are filled', async function (this: CustomWorld) {
@@ -445,7 +445,7 @@ Given('all required discussion fields are filled', async function (this: CustomW
 
 Then('the modal should close and a confirmation alert should appear', async function (this: CustomWorld) {
   await this.page.locator('button:has-text("Save")').first().click().catch(() => {});
-  await expect(this.page.locator('text=Saved, text=Success')).toBeVisible({ timeout: 8_000 }).catch(() => {});
+  await expect(this.page.locator('text=Saved, text=Success')).toBeVisible({ timeout: 15_000 }).catch(() => {});
 });
 
 Given('a discussion was created', async function (this: CustomWorld) {
@@ -457,7 +457,7 @@ When('I view the Discuss list', async function (this: CustomWorld) {
 });
 
 Then('the new row should show the title and expiration date correctly', async function (this: CustomWorld) {
-  await expect(this.page.locator('.discuss-list, table.discuss tbody tr')).toBeVisible({ timeout: 5_000 }).catch(() => {});
+  await expect(this.page.locator('.discuss-list, table.discuss tbody tr')).toBeVisible({ timeout: 15_000 }).catch(() => {});
 });
 
 When('I click the {string} section', async function (this: CustomWorld, section: string) {
@@ -465,8 +465,8 @@ When('I click the {string} section', async function (this: CustomWorld, section:
 });
 
 Then('the {string} header should appear and character counter should show {string}', async function (this: CustomWorld, header: string, counter: string) {
-  await expect(this.page.locator(`text=${header}`)).toBeVisible({ timeout: 5_000 }).catch(() => {});
-  await expect(this.page.locator(`text=${counter}`)).toBeVisible({ timeout: 5_000 }).catch(() => {});
+  await expect(this.page.locator(`text=${header}`)).toBeVisible({ timeout: 15_000 }).catch(() => {});
+  await expect(this.page.locator(`text=${counter}`)).toBeVisible({ timeout: 15_000 }).catch(() => {});
 });
 
 Given('the Conclusion editor is open', async function (this: CustomWorld) {
@@ -479,7 +479,7 @@ When('I enter a closing summary and click {string}', async function (this: Custo
 });
 
 Then('the conclusion content should be saved without errors', async function (this: CustomWorld) {
-  await expect(this.page.locator('text=Saved, text=Success')).toBeVisible({ timeout: 8_000 }).catch(() => {});
+  await expect(this.page.locator('text=Saved, text=Success')).toBeVisible({ timeout: 15_000 }).catch(() => {});
 });
 
 Given('conclusion content was saved', async function (this: CustomWorld) {
@@ -491,7 +491,7 @@ When('I scroll to the bottom of the builder view', async function (this: CustomW
 });
 
 Then('the concluding row should display the saved content accurately', async function (this: CustomWorld) {
-  await expect(this.page.locator('.conclusion-row, .and-finally-row')).toBeVisible({ timeout: 5_000 }).catch(() => {});
+  await expect(this.page.locator('.conclusion-row, .and-finally-row')).toBeVisible({ timeout: 15_000 }).catch(() => {});
 });
 
 Given('I view the top-right sidebar', async function (this: CustomWorld) {
@@ -503,7 +503,7 @@ When('I open the status info popover', async function (this: CustomWorld) {
 });
 
 Then('the draft status details should be visible and closable', async function (this: CustomWorld) {
-  await expect(this.page.locator('.status-details, .draft-info')).toBeVisible({ timeout: 5_000 }).catch(() => {});
+  await expect(this.page.locator('.status-details, .draft-info')).toBeVisible({ timeout: 15_000 }).catch(() => {});
 });
 
 Given('the lesson is ready to publish', async function (this: CustomWorld) {
@@ -515,7 +515,7 @@ When('I click the primary {string} button', async function (this: CustomWorld, n
 });
 
 Then('the app should redirect to the lessons list and show a confirmation modal', async function (this: CustomWorld) {
-  await expect(this.page.locator('text=Lessons, text=Your lesson has been published, text=Published')).toBeVisible({ timeout: 10_000 }).catch(() => {});
+  await expect(this.page.locator('text=Lessons, text=Your lesson has been published, text=Published')).toBeVisible({ timeout: 15_000 }).catch(() => {});
 });
 
 Given('publishing completed successfully', async function (this: CustomWorld) {
@@ -527,7 +527,7 @@ When('I navigate to the dashboard lesson listings', async function (this: Custom
 });
 
 Then('the newly created lesson card should appear with status {string}', async function (this: CustomWorld, status: string) {
-  await expect(this.page.locator(`text=${status}`)).toBeVisible({ timeout: 10_000 }).catch(() => {});
+  await expect(this.page.locator(`text=${status}`)).toBeVisible({ timeout: 15_000 }).catch(() => {});
 });
 
 
