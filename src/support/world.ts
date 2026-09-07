@@ -25,6 +25,19 @@ export class CustomWorld extends World {
 
   baseUrl = envConfig.baseUrl;
 
+  // Dynamic credentials tracked from memory table
+  registrationEmail?: string;
+  registrationPassword?: string;
+  registrationCounter?: number;
+
+  // Track tags created dynamically during a test scenario for post-run cleanup
+  createdTestTags: string[] = [];
+
+  // Track pre-existing tags inspected during a test scenario
+  preExistingTestTags: string[] = [];
+
+  currentScenario?: any;
+
   constructor(options: IWorldOptions) {
     super(options);
   }

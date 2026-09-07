@@ -36,6 +36,7 @@ Feature: Editor Workspace Initialization and Title Blocks
     And I click the Save title button
     Then the title input field dialog should close
 
+
   @case12
   Scenario: Case 12: Validate Persistent Title Rendering
     When I click on the lesson title edit trigger

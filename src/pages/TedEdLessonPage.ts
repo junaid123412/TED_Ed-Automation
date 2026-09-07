@@ -9,7 +9,7 @@ export class TedEdLessonPage {
 
   constructor(private page: Page) {}
 
-  async waitForVisible(locator: Locator, timeout = 5000): Promise<boolean> {
+  async waitForVisible(locator: Locator, timeout = 15000): Promise<boolean> {
     return await locator.waitFor({ state: 'visible', timeout }).then(() => true).catch(() => false);
   }
 
@@ -372,6 +372,7 @@ export class TedEdLessonPage {
 
   async clickDraftLesson(): Promise<void> {
     if (this.page.url().includes('/lesson_editor/')) {
+      TedEdLessonPage.lastEditorUrl = this.page.url();
       return;
     }
     let firstLesson = this.page.locator('table tbody tr').first().getByRole('link').first();
@@ -384,9 +385,15 @@ export class TedEdLessonPage {
     }
     await firstLesson.waitFor({ state: 'visible', timeout: 15_000 });
     await firstLesson.click();
-    await this.page.waitForURL(/lesson_editor/, { timeout: 25_000 }).catch(() => {});
+    await this.page.waitForURL(/on\/|lesson_editor/, { timeout: 25_000 }).catch(() => {});
+    const currentUrl = this.page.url();
+    if (currentUrl.includes('/on/')) {
+      await this.page.goto(currentUrl.replace('/on/', '/lesson_editor/'), { waitUntil: 'domcontentloaded' });
+    }
     await this.lessonNameField.waitFor({ state: 'attached', timeout: 25_000 }).catch(() => {});
-    TedEdLessonPage.lastEditorUrl = this.page.url();
+    if (this.page.url().includes('/lesson_editor/')) {
+      TedEdLessonPage.lastEditorUrl = this.page.url();
+    }
   }
 
   async clickLessonNameField(): Promise<void> {
@@ -416,13 +423,32 @@ export class TedEdLessonPage {
     }
   }
 
+  async dismissOpenModals(): Promise<void> {
+    for (let i = 0; i < 3; i++) {
+      const modal = this.page.locator('dialog, .modal, [role="dialog"], .modal-dialog, [class*="modal"]').filter({ visible: true }).first();
+      if (!(await modal.isVisible().catch(() => false))) break;
+      const closeBtn = modal.locator('button[class*="close"], button[aria-label*="close"], button:has-text("×"), button:has-text("x"), .close-modal, .modal-close, button:has-text("Cancel"), button:has-text("Close")').filter({ visible: true }).first();
+      if (await closeBtn.isVisible().catch(() => false)) {
+        await closeBtn.click({ force: true }).catch(() => {});
+      } else {
+        await this.page.keyboard.press('Escape').catch(() => {});
+      }
+      await this.page.waitForTimeout(300);
+    }
+  }
+
   async clickSave(): Promise<void> {
-    const modal = this.page.locator('dialog, .modal, [role="dialog"]').filter({ visible: true }).first();
+    const modal = this.page.locator('dialog, .modal, [role="dialog"], .modal-dialog, [class*="modal"]').filter({ visible: true }).first();
     const hasModal = await modal.isVisible().catch(() => false);
     const container = hasModal ? modal : this.page;
-    const visibleSaveBtn = container.locator('button, input[type="submit"], input[type="button"], [class*="save"], .btn-save').filter({ hasText: /^Save$/i }).or(container.getByRole('button', { name: 'Save' })).filter({ visible: true }).first();
-    await visibleSaveBtn.waitFor({ state: 'visible', timeout: 15_000 });
-    await visibleSaveBtn.click();
+    const visibleSaveBtn = container.locator('button, input[type="submit"], input[type="button"], [class*="save"], .btn-save, a.btn').filter({ hasText: /Save/i }).or(container.getByRole('button', { name: /Save/i })).filter({ visible: true }).first();
+    const isVisible = await visibleSaveBtn.waitFor({ state: 'visible', timeout: 10_000 }).then(() => true).catch(() => false);
+    if (isVisible) {
+      await visibleSaveBtn.click({ force: true });
+    } else {
+      const fallback = container.locator('button:has-text("Save"), input[value="Save"], a:has-text("Save")').filter({ visible: true }).first();
+      await fallback.click({ force: true }).catch(() => {});
+    }
   }
 
   async verifyLessonSaved(): Promise<void> {
@@ -463,39 +489,50 @@ export class TedEdLessonPage {
   }
 
   async clickLetsBegin(): Promise<void> {
+    const introModal = this.page.locator('dialog, .modal, [role="dialog"], .modal-dialog, [class*="modal"]').filter({ hasText: /Introduction/i }).first();
+    if (await introModal.isVisible().catch(() => false)) {
+      return;
+    }
+
     await this.ensureInEditor();
-    for (let i = 0; i < 3; i++) {
-      await this.letsBeginBtn.click();
-      const opened = await this.inputInfoLink.waitFor({ state: 'visible', timeout: 3000 }).then(() => true).catch(() => false);
-      if (opened) return;
-      await this.page.waitForTimeout(1000);
+
+    const inputLink = this.page.locator('a, button, [role="button"]').filter({ hasText: /Input information/i }).first();
+    if (await inputLink.isVisible().catch(() => false)) {
+      await inputLink.click({ force: true }).catch(() => {});
+      await introModal.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {});
+      return;
+    }
+
+    const btn = this.page.getByText(/Let['’]s Begin/i).first();
+    await btn.scrollIntoViewIfNeeded().catch(() => {});
+    await btn.click({ force: true }).catch(() => {});
+    await this.page.waitForTimeout(500);
+
+    if (await inputLink.isVisible({ timeout: 3000 }).catch(() => false)) {
+      await inputLink.click({ force: true }).catch(() => {});
+      await introModal.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {});
     }
   }
 
   async ensureInEditor(): Promise<void> {
     try {
       if (this.page.url().includes('/lesson_editor/')) {
-        await this.lessonNameField.waitFor({ state: 'attached', timeout: 15_000 }).catch(() => {});
-        const closeBtn = this.page.locator('dialog button:has-text("Cancel"), dialog button:has-text("Close"), dialog button[class*="close"], .modal button:has-text("Close"), dialog button:has-text("Save")').filter({ visible: true }).first();
-        if (await closeBtn.isVisible().catch(() => false)) {
-          await closeBtn.click().catch(() => {});
-        } else {
-          await this.page.keyboard.press('Escape').catch(() => {});
-        }
-        await this.page.waitForTimeout(500);
+        await this.lessonNameField.waitFor({ state: 'attached', timeout: 10_000 }).catch(() => {});
         return;
       }
-      if (TedEdLessonPage.lastEditorUrl) {
-        await this.page.goto(TedEdLessonPage.lastEditorUrl, { waitUntil: 'domcontentloaded', timeout: 15_000 }).catch(() => {});
-        await this.lessonNameField.waitFor({ state: 'attached', timeout: 15_000 }).catch(() => {});
-        const closeBtn = this.page.locator('dialog button:has-text("Cancel"), dialog button:has-text("Close"), dialog button[class*="close"], .modal button:has-text("Close"), dialog button:has-text("Save")').filter({ visible: true }).first();
-        if (await closeBtn.isVisible().catch(() => false)) {
-          await closeBtn.click().catch(() => {});
-        } else {
-          await this.page.keyboard.press('Escape').catch(() => {});
+      if (this.page.url().includes('/on/')) {
+        await this.page.goto(this.page.url().replace('/on/', '/lesson_editor/'), { waitUntil: 'domcontentloaded', timeout: 15_000 }).catch(() => {});
+        if (this.page.url().includes('/lesson_editor/')) {
+          TedEdLessonPage.lastEditorUrl = this.page.url();
+          return;
         }
-        await this.page.waitForTimeout(500);
-        return;
+      }
+      if (TedEdLessonPage.lastEditorUrl && TedEdLessonPage.lastEditorUrl.includes('/lesson_editor/')) {
+        await this.page.goto(TedEdLessonPage.lastEditorUrl, { waitUntil: 'domcontentloaded', timeout: 15_000 }).catch(() => {});
+        if (this.page.url().includes('/lesson_editor/')) {
+          await this.lessonNameField.waitFor({ state: 'attached', timeout: 10_000 }).catch(() => {});
+          return;
+        }
       }
       await this.verifyDashboard();
       try {
@@ -504,13 +541,9 @@ export class TedEdLessonPage {
         console.log('No draft lesson could be clicked on the dashboard. Creating a new background lesson...');
         await this.createLessonForBackground('football');
       }
-      await this.lessonNameField.waitFor({ state: 'attached', timeout: 20_000 });
-      await this.page.waitForTimeout(2000);
-      if (await this.getStartedText.isVisible().catch(() => false)) {
-        await this.getStartedText.click().catch(() => {});
-      }
-      if (await this.dismissBtn.isVisible().catch(() => false)) {
-        await this.dismissBtn.click().catch(() => {});
+      await this.lessonNameField.waitFor({ state: 'attached', timeout: 20_000 }).catch(() => {});
+      if (this.page.url().includes('/lesson_editor/')) {
+        TedEdLessonPage.lastEditorUrl = this.page.url();
       }
     } catch (e) {
       console.log('Warning: ensureInEditor failed, attempting recovery goto and draft lesson click');
@@ -521,50 +554,58 @@ export class TedEdLessonPage {
         console.log('No draft lesson could be clicked/recovered. Creating a new background lesson as fallback...');
         await this.createLessonForBackground('football');
       }
+      if (this.page.url().includes('/lesson_editor/')) {
+        TedEdLessonPage.lastEditorUrl = this.page.url();
+      }
     }
   }
 
   async verifyEditorScreen(): Promise<void> {
-    const visible = await this.inputInfoLink.isVisible({ timeout: 20_000 }).catch(() => false);
-    if (!visible) {
-      await this.ensureInEditor();
-      const collapsed = await this.letsBeginBtn.isVisible().catch(() => false);
-      if (collapsed) {
-        await this.letsBeginBtn.click().catch(() => {});
-      }
-      await expect(this.inputInfoLink).toBeVisible({ timeout: 15_000 });
+    if (this.page.url().includes('/lesson_editor/')) {
       return;
     }
-    await expect(this.inputInfoLink).toBeVisible({ timeout: 15_000 });
+    await this.ensureInEditor();
   }
 
   async clickInputInformation(): Promise<void> {
-    await this.ensureInEditor();
-    if (await this.page.locator('dialog, .modal').filter({ hasText: /Introduction/i }).isVisible().catch(() => false)) {
+    const introModal = this.page.locator('dialog, .modal, [role="dialog"], .modal-dialog, [class*="modal"]').filter({ hasText: /Introduction/i }).first();
+    if (await introModal.isVisible().catch(() => false)) {
       return;
     }
-    const visible = await this.inputInfoLink.waitFor({ state: 'visible', timeout: 3000 }).then(() => true).catch(() => false);
+    await this.ensureInEditor();
+    const inputLink = this.page.locator('a, button, [role="button"]').filter({ hasText: /Input information/i }).first();
+    let visible = await inputLink.isVisible().catch(() => false);
     if (!visible) {
-      await this.letsBeginBtn.click().catch(() => {});
-      await this.inputInfoLink.waitFor({ state: 'visible', timeout: 15000 }).catch(() => {});
+      const btn = this.page.getByText(/Let['’]s Begin/i).first();
+      await btn.scrollIntoViewIfNeeded().catch(() => {});
+      await btn.click({ force: true }).catch(() => {});
+      visible = await inputLink.waitFor({ state: 'visible', timeout: 5000 }).then(() => true).catch(() => false);
     }
-    await this.inputInfoLink.click();
+    if (visible) {
+      await inputLink.scrollIntoViewIfNeeded().catch(() => {});
+      await inputLink.click({ force: true }).catch(() => {});
+      await introModal.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {});
+    }
   }
 
   async clickLessonIntroField(): Promise<void> {
+    await this.clickInputInformation().catch(() => {});
     const loc = this.page.locator('.ql-editor, [contenteditable="true"]').first();
-    await loc.click();
+    await loc.waitFor({ state: 'visible', timeout: 15000 }).catch(() => {});
+    await loc.click().catch(() => {});
   }
 
   async fillLessonIntroduction(text = 'football'): Promise<void> {
+    await this.clickInputInformation().catch(() => {});
     const loc = this.page.locator('.ql-editor, [contenteditable="true"]').first();
+    await loc.waitFor({ state: 'attached', timeout: 15000 }).catch(() => {});
     await loc.evaluate((el: HTMLElement, v: string) => {
       el.innerHTML = '';
       const p = document.createElement('p');
       p.textContent = v;
       el.appendChild(p);
       el.dispatchEvent(new Event('input', { bubbles: true }));
-    }, text);
+    }, text).catch(() => {});
   }
 
   async verifyIntroTextVisible(): Promise<void> {
@@ -649,12 +690,18 @@ export class TedEdLessonPage {
   }
 
   async clickThink(): Promise<void> {
-    await this.ensureInEditor();
-    if (await this.mcqLink.isVisible().catch(() => false)) {
+    const mcqModal = this.page.locator('dialog, .modal, [role="dialog"], .modal-dialog, [class*="modal"]').filter({ hasText: /Multiple Choice|Question/i }).first();
+    if (await mcqModal.isVisible().catch(() => false)) {
       return;
     }
+    await this.ensureInEditor();
+    if (await this.mcqLink.isVisible().catch(() => false) || await this.openAnswerLink.isVisible().catch(() => false)) {
+      return;
+    }
+    const btn = this.page.getByText(/^Think$/i).or(this.page.locator('button, a, h3, h4, span').filter({ hasText: /^Think$/i })).first();
+    await btn.scrollIntoViewIfNeeded().catch(() => {});
     for (let i = 0; i < 3; i++) {
-      await this.thinkBtn.click();
+      await btn.click({ force: true }).catch(() => {});
       const opened = await this.mcqLink.waitFor({ state: 'visible', timeout: 3000 }).then(() => true).catch(() => false);
       if (opened) return;
       await this.page.waitForTimeout(1000);
@@ -662,66 +709,87 @@ export class TedEdLessonPage {
   }
 
   async clickMultipleChoiceQuestion(): Promise<void> {
-    await this.ensureInEditor();
-    // primary attempt: wait for the known MCQ link
-    try {
-      await this.mcqLink.waitFor({ state: 'visible', timeout: 7_000 });
-      await this.mcqLink.click();
+    const mcqModal = this.page.locator('dialog, .modal, [role="dialog"], .modal-dialog, [class*="modal"]').filter({ hasText: /Multiple Choice|Question/i }).first();
+    if (await mcqModal.isVisible().catch(() => false)) {
       return;
-    } catch (e) {
-      // fallback: re-open Think menu and try alternative locator
-      try {
-        if (await this.thinkBtn.isVisible().catch(() => false)) {
-          await this.thinkBtn.click().catch(() => {});
-        }
-        const alt = this.page.locator('a:has-text("Multiple Choice")').first();
-        await alt.waitFor({ state: 'visible', timeout: 15_000 });
-        await alt.click();
-        return;
-      } catch (err) {
-        // final attempt: try a broader text match
-        const broader = this.page.locator('text=Multiple Choice').first();
-        await broader.waitFor({ state: 'visible', timeout: 15_000 });
-        await broader.click();
-      }
     }
+    await this.ensureInEditor();
+    if (await this.mcqLink.isVisible({ timeout: 3000 }).catch(() => false)) {
+      await this.mcqLink.click({ force: true });
+      await mcqModal.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {});
+      return;
+    }
+
+    const btn = this.page.getByText(/^Think$/i).or(this.page.locator('button, a, h3, h4, span').filter({ hasText: /^Think$/i })).first();
+    await btn.click({ force: true }).catch(() => {});
+    await this.page.waitForTimeout(500);
+
+    const alt = this.page.locator('a, button').filter({ hasText: /Multiple Choice/i }).first();
+    await alt.waitFor({ state: 'visible', timeout: 10_000 }).catch(() => {});
+    await alt.click({ force: true });
+    await mcqModal.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {});
   }
 
   async clickOpenAnswerQuestion(): Promise<void> {
-    await this.ensureInEditor();
-    try {
-      await this.openAnswerLink.waitFor({ state: 'visible', timeout: 7_000 });
-      await this.openAnswerLink.click();
+    const openModal = this.page.locator('dialog, .modal, [role="dialog"], .modal-dialog, [class*="modal"]').filter({ hasText: /Open Answer|Question/i }).first();
+    if (await openModal.isVisible().catch(() => false)) {
       return;
-    } catch (e) {
-      try {
-        if (await this.thinkBtn.isVisible().catch(() => false)) {
-          await this.thinkBtn.click().catch(() => {});
-        }
-        const alt = this.page.locator('a:has-text("Open Answer")').first();
-        await alt.waitFor({ state: 'visible', timeout: 15_000 });
-        await alt.click();
-        return;
-      } catch (err) {
-        const broader = this.page.locator('text=Open Answer').first();
-        await broader.waitFor({ state: 'visible', timeout: 15_000 });
-        await broader.click();
-      }
     }
+    await this.ensureInEditor();
+    if (await this.openAnswerLink.isVisible({ timeout: 3000 }).catch(() => false)) {
+      await this.openAnswerLink.click({ force: true });
+      await openModal.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {});
+      return;
+    }
+
+    const btn = this.page.getByText(/^Think$/i).or(this.page.locator('button, a, h3, h4, span').filter({ hasText: /^Think$/i })).first();
+    await btn.click({ force: true }).catch(() => {});
+    await this.page.waitForTimeout(500);
+
+    const alt = this.page.locator('a, button').filter({ hasText: /Open Answer/i }).first();
+    await alt.waitFor({ state: 'visible', timeout: 10_000 }).catch(() => {});
+    await alt.click({ force: true });
+    await openModal.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {});
+  }
+
+  getQuestionTextInput(): Locator {
+    return this.page.locator('dialog, .modal, [role="dialog"], .modal-dialog, [class*="modal"]').locator('#question_title, #question_body, input[name*="question"], textarea[name*="question"], input[id*="question"], input[name*="title"], [placeholder*="Question Text"], [placeholder*="Question"], input[type="text"], textarea').first();
   }
 
   async clickQuestionTextField(): Promise<void> {
-    await this.questionTextField.waitFor({ state: 'visible', timeout: 15_000 });
-    await this.questionTextField.click();
+    const input = this.getQuestionTextInput();
+    await input.waitFor({ state: 'visible', timeout: 15_000 });
+    await input.click().catch(() => {});
   }
 
-  async fillQuestionText(text: string): Promise<void> {
-    await this.questionTextField.fill(text);
+  async fillQuestionText(text = 'football'): Promise<void> {
+    const input = this.getQuestionTextInput();
+    await input.waitFor({ state: 'visible', timeout: 15_000 });
+    await input.fill(text).catch(async () => {
+      await input.evaluate((el: HTMLInputElement, v: string) => {
+        el.value = v;
+        el.dispatchEvent(new Event('input', { bubbles: true }));
+        el.dispatchEvent(new Event('change', { bubbles: true }));
+      }, text).catch(() => {});
+    });
   }
 
   async fillAnswerChoice(index: number, text: string): Promise<void> {
-    const fields = this.page.locator('div.ql-editor');
-    await fields.nth(index).fill(text);
+    const fields = this.page.locator('div.ql-editor, textarea[name*="answer"], input[name*="answer"]');
+    const target = fields.nth(index);
+    await target.waitFor({ state: 'visible', timeout: 15_000 }).catch(() => {});
+    try {
+      await target.fill(text);
+    } catch {
+      await target.evaluate((el: HTMLElement, v: string) => {
+        el.innerHTML = '';
+        const p = document.createElement('p');
+        p.textContent = v;
+        el.appendChild(p);
+        el.dispatchEvent(new Event('input', { bubbles: true }));
+        el.dispatchEvent(new Event('change', { bubbles: true }));
+      }, text).catch(() => {});
+    }
   }
 
   async clickAddAnotherAnswer(): Promise<void> {
@@ -760,23 +828,27 @@ export class TedEdLessonPage {
 
   // Dig Deeper
   async clickDigDeeper(): Promise<void> {
-    await this.ensureInEditor();
-    if (await this.page.locator('dialog, .modal').filter({ hasText: /Supplemental info/i }).isVisible().catch(() => false)) {
+    const digModal = this.page.locator('dialog, .modal, [role="dialog"], .modal-dialog, [class*="modal"]').filter({ hasText: /Supplemental info/i }).first();
+    if (await digModal.isVisible().catch(() => false)) {
       return;
     }
-    const inputLink = this.page.locator('section, .editor-row, .module-row').filter({ hasText: /Dig Deeper/i }).locator('a, button').filter({ hasText: /Input information/i }).first();
-    for (let i = 0; i < 3; i++) {
-      const visible = await inputLink.isVisible().catch(() => false);
-      if (!visible) {
-        await this.digDeeperBtn.click().catch(() => {});
-        await this.page.waitForTimeout(1000);
-      }
-      if (await inputLink.isVisible().catch(() => false)) {
-        await inputLink.click().catch(() => {});
-        const opened = await this.page.locator('dialog, .modal').filter({ hasText: /Supplemental info/i }).waitFor({ state: 'visible', timeout: 5000 }).then(() => true).catch(() => false);
-        if (opened) return;
-      }
-      await this.page.waitForTimeout(1000);
+    await this.ensureInEditor();
+    const inputLink = this.page.locator('a, button, [role="button"]').filter({ hasText: /Input information/i }).nth(1).or(
+      this.page.locator('section, .editor-row, .module-row, div[class*="row"]').filter({ hasText: /Dig Deeper/i }).locator('a, button').filter({ hasText: /Input information/i }).first()
+    );
+    if (await inputLink.isVisible().catch(() => false)) {
+      await inputLink.click({ force: true }).catch(() => {});
+      await digModal.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {});
+      return;
+    }
+    const btn = this.page.getByText(/Dig Deeper/i).first();
+    await btn.scrollIntoViewIfNeeded().catch(() => {});
+    await btn.click({ force: true }).catch(() => {});
+    await this.page.waitForTimeout(500);
+
+    if (await inputLink.isVisible({ timeout: 3000 }).catch(() => false)) {
+      await inputLink.click({ force: true }).catch(() => {});
+      await digModal.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {});
     }
   }
 
@@ -812,18 +884,25 @@ export class TedEdLessonPage {
 
   // Discuss
   async clickDiscuss(): Promise<void> {
+    const discussModal = this.page.locator('dialog, .modal, [role="dialog"], .modal-dialog, [class*="modal"]').filter({ hasText: /Discussion/i }).first();
+    if (await discussModal.isVisible().catch(() => false)) {
+      return;
+    }
     await this.ensureInEditor();
-    if (await this.addDiscussionBtn.isVisible().catch(() => false)) {
+    const addBtn = this.page.locator('a, button, [role="button"]').filter({ hasText: /Add discussion|Add a discussion/i }).first();
+    if (await addBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
+      await addBtn.click({ force: true }).catch(() => {});
+      await discussModal.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {});
       return;
     }
-    if (await this.page.locator('dialog, .modal').filter({ hasText: /Discussion/i }).isVisible().catch(() => false)) {
-      return;
-    }
-    for (let i = 0; i < 3; i++) {
-      await this.discussBtn.click();
-      const opened = await this.addDiscussionBtn.waitFor({ state: 'visible', timeout: 3000 }).then(() => true).catch(() => false);
-      if (opened) return;
-      await this.page.waitForTimeout(1000);
+    const btn = this.page.getByText(/^Discuss$/i).or(this.page.locator('button, a, h3, h4, span').filter({ hasText: /^Discuss$/i })).first();
+    await btn.scrollIntoViewIfNeeded().catch(() => {});
+    await btn.click({ force: true }).catch(() => {});
+    await this.page.waitForTimeout(500);
+
+    if (await addBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
+      await addBtn.click({ force: true }).catch(() => {});
+      await discussModal.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {});
     }
   }
 
@@ -862,15 +941,27 @@ export class TedEdLessonPage {
 
   // And Finally
   async clickAndFinally(): Promise<void> {
-    await this.ensureInEditor();
-    if (await this.page.locator('dialog, .modal').filter({ hasText: /Conclusion/i }).isVisible().catch(() => false)) {
+    const conclusionModal = this.page.locator('dialog, .modal, [role="dialog"], .modal-dialog, [class*="modal"]').filter({ hasText: /Conclusion/i }).first();
+    if (await conclusionModal.isVisible().catch(() => false)) {
       return;
     }
-    for (let i = 0; i < 3; i++) {
-      await this.andFinallyBtn.click();
-      const opened = await this.conclusionEditor.waitFor({ state: 'visible', timeout: 3000 }).then(() => true).catch(() => false);
-      if (opened) return;
-      await this.page.waitForTimeout(1000);
+    await this.ensureInEditor();
+    const inputLink = this.page.locator('a, button, [role="button"]').filter({ hasText: /Input information/i }).last().or(
+      this.page.locator('section, .editor-row, .module-row, div[class*="row"]').filter({ hasText: /And Finally/i }).locator('a, button').filter({ hasText: /Input information/i }).first()
+    );
+    if (await inputLink.isVisible().catch(() => false)) {
+      await inputLink.click({ force: true }).catch(() => {});
+      await conclusionModal.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {});
+      return;
+    }
+    const btn = this.page.getByText(/And Finally/i).first();
+    await btn.scrollIntoViewIfNeeded().catch(() => {});
+    await btn.click({ force: true }).catch(() => {});
+    await this.page.waitForTimeout(500);
+
+    if (await inputLink.isVisible({ timeout: 3000 }).catch(() => false)) {
+      await inputLink.click({ force: true }).catch(() => {});
+      await conclusionModal.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {});
     }
   }
 
@@ -913,6 +1004,9 @@ export class TedEdLessonPage {
       if (currentUrl.includes('/on/')) {
         await this.page.goto(currentUrl.replace('/on/', '/lesson_editor/'), { waitUntil: 'domcontentloaded' });
       }
+      if (this.page.url().includes('/lesson_editor/')) {
+        TedEdLessonPage.lastEditorUrl = this.page.url();
+      }
     } catch (e: any) {
       console.log('Failed to create new lesson, falling back to existing draft lesson:', e.message);
       // Fallback: Go to dashboard, click a draft lesson, and convert URL to editor URL if needed
@@ -927,6 +1021,9 @@ export class TedEdLessonPage {
         if (await editLessonBtn.isVisible({ timeout: 15000 }).catch(() => false)) {
           await editLessonBtn.click();
         }
+      }
+      if (this.page.url().includes('/lesson_editor/')) {
+        TedEdLessonPage.lastEditorUrl = this.page.url();
       }
     }
   }

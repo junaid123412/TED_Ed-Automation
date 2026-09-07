@@ -19,3 +19,5 @@ scratch/
 .env.staging
 .env.production
 memory.md
+test-memory-table.json
+test-memory-table*.json

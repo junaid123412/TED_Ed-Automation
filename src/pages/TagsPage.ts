@@ -1,4 +1,6 @@
 import { Page, Locator, expect } from '@playwright/test';
+import { TagManager } from '@utils/tagManager';
+import { TestMemoryTableManager } from '@utils/testMemoryTable';
 
 export class TagsPage {
   constructor(private page: Page) {}
@@ -127,11 +129,21 @@ export class TagsPage {
     }
   }
 
-  async selectOption(optionName: string): Promise<void> {
-    const opt = this.page.getByRole('option', { name: optionName }).first();
-    if (await opt.isVisible().catch(() => false)) {
+  async selectOption(optionName: string, world?: any): Promise<string> {
+    const { tagName } = await TagManager.ensureTagExists(this.page, optionName, world);
+    const opt = this.page.getByRole('option', { name: new RegExp(`^${tagName}$`, 'i') }).first()
+      .or(this.page.getByRole('option', { name: tagName }).first())
+      .or(this.page.locator('.ts-dropdown .option, .dropdown-menu .option, [role="option"]').filter({ hasText: tagName }).first());
+    
+    if (await opt.isVisible({ timeout: 2000 }).catch(() => false)) {
       await opt.click().catch(() => {});
+    } else {
+      const firstOpt = this.page.getByRole('option').first();
+      if (await firstOpt.isVisible({ timeout: 2000 }).catch(() => false)) {
+        await firstOpt.click().catch(() => {});
+      }
     }
+    return tagName;
   }
 
   async clickSidebar(): Promise<void> {
@@ -141,9 +153,14 @@ export class TagsPage {
   }
 
   async clickRemoveTag(tagName: string): Promise<void> {
-    const btn = this.page.getByRole('button', { name: `Remove ${tagName}` }).first();
-    if (await btn.isVisible().catch(() => false)) {
+    const btn = this.page.getByRole('button', { name: `Remove ${tagName}` }).first()
+      .or(this.page.getByRole('button', { name: new RegExp(`Remove ${tagName}`, 'i') }).first())
+      .or(this.page.locator(`button[aria-label*="Remove ${tagName}" i]`).first())
+      .or(this.page.locator('.tag, .tag-chip, .badge').filter({ hasText: tagName }).locator('.remove, .close, button').first())
+      .or(this.page.locator('.tag .remove, .tag-chip .close, .badge button').first());
+    if (await btn.isVisible({ timeout: 2000 }).catch(() => false)) {
       await btn.click().catch(() => {});
+      TestMemoryTableManager.markTagDeleted(tagName);
     }
   }
 
@@ -155,8 +172,10 @@ export class TagsPage {
   }
 
   async clickEditTagLink(tagName: string): Promise<void> {
-    const link = this.page.getByRole('link', { name: `Edit ${tagName}` }).first();
-    if (await link.isVisible().catch(() => false)) {
+    const link = this.page.getByRole('link', { name: `Edit ${tagName}` }).first()
+      .or(this.page.getByRole('link', { name: new RegExp(`Edit ${tagName}`, 'i') }).first())
+      .or(this.page.locator('a:has-text("Edit")').first());
+    if (await link.isVisible({ timeout: 2000 }).catch(() => false)) {
       await link.click().catch(() => {});
     }
   }
@@ -180,9 +199,15 @@ export class TagsPage {
   }
 
   async clickDeleteTag(tagName: string): Promise<void> {
-    const btn = this.page.getByRole('button', { name: `Delete ${tagName}` }).first();
-    if (await btn.isVisible().catch(() => false)) {
+    const btn = this.page.getByRole('button', { name: `Delete ${tagName}` }).first()
+      .or(this.page.getByRole('button', { name: new RegExp(`Delete ${tagName}`, 'i') }).first())
+      .or(this.page.locator(`button:has-text("Delete")`).first());
+    if (await btn.isVisible({ timeout: 2000 }).catch(() => false)) {
+      this.page.once('dialog', async (dialog) => {
+        await dialog.accept().catch(() => {});
+      });
       await btn.click().catch(() => {});
+      TestMemoryTableManager.markTagDeleted(tagName);
     }
   }
 

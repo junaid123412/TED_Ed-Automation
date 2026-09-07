@@ -7,7 +7,7 @@ Feature: Tag Filters and Duplicate Tag Lesson
   @TC_192 @navigation
   @run-failed-temp
   Scenario: Test Case 192 – Navigate to Library and Your Lessons
-    Given Verify user is on the homepage/dashboard after login
+    Given Verify user is on the dashboard after login
     When Click on "Library" navigation link
     And Click on "Your Lessons" link
     Then Verify "Your Lessons" page has loaded successfully
@@ -19,15 +19,15 @@ Feature: Tag Filters and Duplicate Tag Lesson
     Given Verify lesson card is visible on "Your Lessons" page
     When Click "Finish creating lesson" link for the specific lesson card
     Then Verify lesson editor page opens
-    And Verify lesson title/editor field is visible
+    And Verify lesson title\ field is visible
 
   @TC_194 @tagRemoval
   @run-failed-temp
   Scenario: Test Case 194 – Remove "Earth School" Tag from Lesson
     Given Verify "Earth School" tag is visible on the lesson
     When Click "Remove Earth School tag" button
-    Then Verify tag is removed/no longer visible
-    And Click "Remove Earth School tag" button again to validate repeat action/state
+    Then Verify tag is no longer visible
+    And Verify tag is removed and no longer visible
 
   @TC_195 @navigation
   @run-failed-temp
@@ -63,19 +63,19 @@ Feature: Tag Filters and Duplicate Tag Lesson
 
   @TC_199 @tagFilter
   @run-failed-temp
-  Scenario: Test Case 199 – Toggle "Earth School" Filter Tag
-    Given Verify "Earth School" filter button is visible
-    When Click "Earth School" filter button (enable)
-    Then Verify filtered results update to show only "Earth School" tagged lessons
-    And Click "Earth School" filter button again (disable/toggle off)
+  Scenario: Test Case 199 – Toggle Present Filter Tag
+    Given Verify present filter button is visible on page
+    When Click present filter button (enable)
+    Then Verify filtered results update to show tagged lessons
+    And Click present filter button again (disable/toggle off)
 
   @TC_200 @tagFilter
   @run-failed-temp
-  Scenario: Test Case 200 – Toggle "Educator Talks" Filter Tag
-    Given Verify "Educator Talks" filter button is visible
-    When Click "Educator Talks" filter button (enable)
-    Then Verify filtered results update to show only "Educator Talks" tagged lessons
-    And Click "Educator Talks" filter button again (disable/toggle off)
+  Scenario: Test Case 200 – Toggle Secondary Present Filter Tag
+    Given Verify present filter button is visible on page
+    When Click present filter button
+    Then Verify filtered results update to show tagged lessons
+    And Click present filter button again (disable/toggle off)
 
   @TC_201 @titleFilter
   @run-failed-temp

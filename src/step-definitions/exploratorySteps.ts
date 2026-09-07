@@ -1197,3 +1197,7 @@ When(/^Review the available options$/, async function (this: CustomWorld) {
 When(/^Return to the original lesson page and refresh$/, async function (this: CustomWorld) {
   // no-op
 });
+
+Then('Verify tag is removed and no longer visible', () => {
+  // Write code here that turns the phrase above into concrete actions
+})

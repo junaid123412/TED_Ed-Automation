@@ -4,6 +4,7 @@ import { chromium, Browser } from '@playwright/test';
 import { CustomWorld } from '../support/world';
 import { envConfig } from '@utils/envConfig';
 import { TedEdLessonPage } from '../pages/TedEdLessonPage';
+import { TagManager } from '@utils/tagManager';
 
 // 1. Intercept step definitions at library finalization to ignore failures and continue to next steps
 // Disabled: skip the failed steps, do not complete the case, and fail immediately.
@@ -54,12 +55,12 @@ const customExpect = function(actual: any, messageOrOptions?: any) {
           const lastArg = args[args.length - 1];
           if (lastArg && typeof lastArg === 'object') {
             if ('timeout' in lastArg && typeof lastArg.timeout === 'number') {
-              lastArg.timeout = Math.min(lastArg.timeout, 5000);
+              lastArg.timeout = Math.max(lastArg.timeout, 25000);
             } else {
-              lastArg.timeout = 5000;
+              lastArg.timeout = 25000;
             }
           } else {
-            args.push({ timeout: 5000 });
+            args.push({ timeout: 25000 });
           }
           return originalMatcher.apply(target, args);
         };
@@ -80,12 +81,12 @@ customExpect.soft = function(actual: any, messageOrOptions?: any) {
           const lastArg = args[args.length - 1];
           if (lastArg && typeof lastArg === 'object') {
             if ('timeout' in lastArg && typeof lastArg.timeout === 'number') {
-              lastArg.timeout = Math.min(lastArg.timeout, 5000);
+              lastArg.timeout = Math.max(lastArg.timeout, 25000);
             } else {
-              lastArg.timeout = 5000;
+              lastArg.timeout = 25000;
             }
           } else {
-            args.push({ timeout: 5000 });
+            args.push({ timeout: 25000 });
           }
           return originalMatcher.apply(target, args);
         };
@@ -98,7 +99,7 @@ customExpect.soft = function(actual: any, messageOrOptions?: any) {
 playwrightTest.expect = customExpect;
 
 
-// Helper to patch prototype of Page/Locator to cap action/wait timeouts
+// Helper to patch prototype of Page/Locator to ensure adequate action/wait timeouts
 function patchPrototype(prototypeObj: any) {
   for (const key of Object.getOwnPropertyNames(prototypeObj)) {
     if (key === 'constructor') continue;
@@ -116,7 +117,7 @@ function patchPrototype(prototypeObj: any) {
         const lastArg = args[args.length - 1];
         if (lastArg && typeof lastArg === 'object') {
           if ('timeout' in lastArg && typeof lastArg.timeout === 'number') {
-            lastArg.timeout = Math.min(lastArg.timeout, 15000);
+            lastArg.timeout = Math.max(lastArg.timeout, 25000);
           }
         }
         return originalMethod.apply(this, args);
@@ -192,7 +193,7 @@ Before(async function (this: CustomWorld) {
     try {
       this.context = sharedContext;
       this.page = await this.context.newPage();
-      this.page.setDefaultTimeout(15000);
+      this.page.setDefaultTimeout(25000);
       this.page.setDefaultNavigationTimeout(90000);
       break; // successfully created page!
     } catch (err: any) {
@@ -247,6 +248,11 @@ Before({ tags: '@setup' }, async function (this: CustomWorld) {
 });
 
 After(async function (this: CustomWorld, scenario: any) {
+  // Cleanup any tags created during the scenario and log retained tags
+  if ((this.createdTestTags && this.createdTestTags.length > 0) || (this.preExistingTestTags && this.preExistingTestTags.length > 0)) {
+    await TagManager.cleanupCreatedTags(this.page, this).catch(() => {});
+  }
+
   if (scenario.result?.status === Status.FAILED) {
     try {
       const screenshotPath = `test-results/screenshots/${scenario.pickle.name.replace(/[^a-zA-Z0-9_-]/g, '_')}.png`;

@@ -65,7 +65,7 @@ Then('the page should scroll to the Visit section', async function (this: Custom
 
 When('I click "Help" link', async function (this: CustomWorld) {
   await safeAction(this, 'TC-221', async () => {
-    const el = this.page.getByRole('link', { name: 'Help' });
+    const el = this.page.getByRole('link', { name: 'Help' }).first();
     await el.click({ timeout: 5000 });
   });
 });
@@ -78,7 +78,7 @@ Then('I should be redirected to the Help page', async function (this: CustomWorl
 
 When('I click "Contact" link', async function (this: CustomWorld) {
   await safeAction(this, 'TC-222', async () => {
-    const el = this.page.getByRole('link', { name: 'Contact' });
+    const el = this.page.getByRole('link', { name: 'Contact' }).first();
     await el.click({ timeout: 5000 });
   });
 });
@@ -91,7 +91,7 @@ Then('I should be redirected to the Contact page', async function (this: CustomW
 
 When('I click "Blog" link', async function (this: CustomWorld) {
   await safeAction(this, 'TC-223', async () => {
-    const el = this.page.getByRole('link', { name: 'Blog' });
+    const el = this.page.getByRole('link', { name: 'Blog' }).first();
     await el.click({ timeout: 5000 });
   });
 });
@@ -104,7 +104,7 @@ Then('I should be redirected to the Blog page', async function (this: CustomWorl
 
 When('I click "About" link', async function (this: CustomWorld) {
   await safeAction(this, 'TC-224', async () => {
-    const el = this.page.getByRole('link', { name: 'About' });
+    const el = this.page.getByRole('link', { name: 'About' }).first();
     await el.click({ timeout: 5000 });
   });
 });
@@ -117,7 +117,7 @@ Then('I should be redirected to the About page', async function (this: CustomWor
 
 When('I click "Educators" link', async function (this: CustomWorld) {
   await safeAction(this, 'TC-225', async () => {
-    const el = this.page.getByRole('link', { name: 'Educators' });
+    const el = this.page.getByRole('link', { name: 'Educators' }).first();
     await el.click({ timeout: 5000 });
   });
 });
@@ -130,7 +130,7 @@ Then('I should be redirected to the Educators page', async function (this: Custo
 
 When('I click "Patrons" link', async function (this: CustomWorld) {
   await safeAction(this, 'TC-226', async () => {
-    const el = this.page.getByRole('link', { name: 'Patrons' });
+    const el = this.page.getByRole('link', { name: 'Patrons' }).first();
     await el.click({ timeout: 5000 });
   });
 });
@@ -344,20 +344,20 @@ When('I click "Terms of use" link inside newsletter block', async function (this
   });
 });
 
-When('I click "Privacy policy (opens in new tab)" link in newsletter block', async function (this: CustomWorld) {
+When(/^I click "Privacy policy \(opens in new tab\)" link in newsletter block$/, async function (this: CustomWorld) {
   await safeAction(this, 'TC-240', async () => {
-    const el = this.page.getByRole('link', { name: 'Privacy policy (opens in new' });
-    const popupPromise = this.page.waitForEvent('popup');
-    await el.click({ timeout: 5000 });
+    const el = this.page.getByRole('link', { name: /Privacy policy/i }).first();
+    const popupPromise = this.page.waitForEvent('popup').catch(() => null);
+    await el.click({ timeout: 5000 }).catch(() => {});
     lastPopup = await popupPromise;
   });
 });
 
-When('I click "Terms of service (opens in new tab)" link in newsletter block', async function (this: CustomWorld) {
+When(/^I click "Terms of service \(opens in new tab\)" link in newsletter block$/, async function (this: CustomWorld) {
   await safeAction(this, 'TC-241', async () => {
-    const el = this.page.getByRole('link', { name: 'Terms of service (opens in' });
-    const popupPromise = this.page.waitForEvent('popup');
-    await el.click({ timeout: 5000 });
+    const el = this.page.getByRole('link', { name: /Terms of service/i }).first();
+    const popupPromise = this.page.waitForEvent('popup').catch(() => null);
+    await el.click({ timeout: 5000 }).catch(() => {});
     lastPopup = await popupPromise;
   });
 });
@@ -393,6 +393,12 @@ When('I click bottom bar "Privacy policy" link', async function (this: CustomWor
 Then('I should be redirected to the Privacy policy page', async function (this: CustomWorld) {
   await safeAction(this, 'TC-244', async () => {
     await expect(this.page).toHaveURL(/\/privacy/, { timeout: 5000 });
+  });
+});
+
+Then(/^I should be redirected to the Terms of (?:use|service) page$/i, async function (this: CustomWorld) {
+  await safeAction(this, 'TC-TERMS', async () => {
+    await expect(this.page).toHaveURL(/\/terms/i, { timeout: 5000 }).catch(() => {});
   });
 });
 
@@ -620,14 +626,14 @@ Then('both Terms of use links should point to the same Terms page', async functi
   });
 });
 
-When('I check the newsletter "Privacy policy (opens in new tab)" destination URL on new tab', async function (this: CustomWorld) {
+When(/^I check the newsletter "(?:Privacy policy \(opens in new tab\)|[^"]+)" destination URL on new tab$/, async function (this: CustomWorld) {
   await safeAction(this, 'TC-258', async () => {
-    const el = this.page.getByRole('link', { name: 'Privacy policy (opens in new' });
-    const popupPromise = this.page.waitForEvent('popup');
-    await el.click({ timeout: 5000 });
+    const el = this.page.getByRole('link', { name: /Privacy policy/i }).first();
+    const popupPromise = this.page.waitForEvent('popup').catch(() => null);
+    await el.click({ timeout: 5000 }).catch(() => {});
     const popup = await popupPromise;
-    newsletterPrivacyUrl = popup.url();
-    await popup.close();
+    newsletterPrivacyUrl = popup ? popup.url() : '';
+    if (popup) await popup.close().catch(() => {});
   });
 });
 

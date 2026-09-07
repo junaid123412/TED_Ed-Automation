@@ -1,7 +1,9 @@
-import { Given, When, Then } from '@cucumber/cucumber';
+import { Given, When, Then, After } from '@cucumber/cucumber';
 import { CustomWorld } from '../support/world';
 import { expect } from '@playwright/test';
 import { TagsPage } from '../pages/TagsPage';
+import { TagManager } from '@utils/tagManager';
+import { TestMemoryTableManager } from '@utils/testMemoryTable';
 
 // Helper to get or initialize TagsPage on CustomWorld
 function getTagsPage(world: CustomWorld): TagsPage {
@@ -228,7 +230,7 @@ When('Click the Tags combobox for the selected video', async function (this: Cus
 
 When('Select the {string} option from the dropdown', async function (this: CustomWorld, tagName: string) {
   const tagsPage = getTagsPage(this);
-  await tagsPage.selectOption(tagName);
+  await tagsPage.selectOption(tagName, this);
 });
 
 When('Click on the sidebar area to confirm tag persistence outside the dropdown', async function (this: CustomWorld) {
@@ -257,7 +259,7 @@ When('Click the Tags combobox for the video', async function (this: CustomWorld)
 
 When('Select the {string} option again from the dropdown', async function (this: CustomWorld, tagName: string) {
   const tagsPage = getTagsPage(this);
-  await tagsPage.selectOption(tagName);
+  await tagsPage.selectOption(tagName, this);
 });
 
 When('Click on the video result section to confirm the tag is saved against the correct video', async function (this: CustomWorld) {
@@ -322,12 +324,12 @@ When('Click the tags combobox area flex wrap container for the video', async fun
 
 When('Select an additional tag option {string} from the list', async function (this: CustomWorld, tagName: string) {
   const tagsPage = getTagsPage(this);
-  await tagsPage.selectOption(tagName);
+  await tagsPage.selectOption(tagName, this);
 });
 
 When('Select another tag option with a longer label {string} from the list', async function (this: CustomWorld, tagName: string) {
   const tagsPage = getTagsPage(this);
-  await tagsPage.selectOption(tagName);
+  await tagsPage.selectOption(tagName, this);
 });
 
 Then('Second tag is also added without removing previously applied tags', async function (this: CustomWorld) {
@@ -381,7 +383,7 @@ When('Type a free-text value {string} into the Tags combobox', async function (t
 
 When('Select the matching generated tag option {string} from the filtered list', async function (this: CustomWorld, tagName: string) {
   const tagsPage = getTagsPage(this);
-  await tagsPage.selectOption(tagName);
+  await tagsPage.selectOption(tagName, this);
 });
 
 Then('New tag {string} is created and applied to the video', async function (this: CustomWorld, tagName: string) {
@@ -800,4 +802,8 @@ When('Verify the lesson editor loads with the correct lesson context', async fun
 Then("Verify the Tags combobox is visible for the lesson's video", async function (this: CustomWorld) {
   const tagsPage = getTagsPage(this);
   await expect(tagsPage.tagsForFootballCombobox).toBeVisible().catch(() => {});
+});
+
+After({ tags: '@tags or @tagManagement' }, async function (this: CustomWorld) {
+  await TagManager.cleanupCreatedTags(this.page, this);
 });

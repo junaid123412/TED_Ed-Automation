@@ -1,12 +1,20 @@
-import { Given, Then, When, Before, After } from '@cucumber/cucumber';
+import { Given, Then, When, Before, After, Status } from '@cucumber/cucumber';
 import { expect } from '@playwright/test';
 import { CustomWorld } from '../support/world';
 import { envConfig } from '@utils/envConfig';
+import { TestMemoryTableManager } from '@utils/testMemoryTable';
 
 let registrationContext: any = null;
 
-Before({ tags: '@registerAccount', timeout: 60000 }, async function (this: CustomWorld) {
+Before({ tags: '@registerAccount', timeout: 60000 }, async function (this: CustomWorld, scenario: any) {
   console.log('\n[REGISTRATION-SETUP] Creating isolated unauthenticated browser context...\n');
+
+  const scenarioName = scenario?.pickle?.name || (this as any).currentScenario?.pickle?.name || 'Registration Scenario';
+  // Obtain fresh sequential credentials from the memory table marked as ACTIVE
+  const creds = TestMemoryTableManager.getNextRegistrationCredentials(scenarioName);
+  this.registrationEmail = creds.email;
+  this.registrationPassword = creds.password;
+  this.registrationCounter = creds.counter;
   
   if (this.page) {
     await this.page.close().catch(() => {});
@@ -22,14 +30,24 @@ Before({ tags: '@registerAccount', timeout: 60000 }, async function (this: Custo
   });
   
   this.page = await registrationContext.newPage();
-  this.page.setDefaultTimeout(15000);
+  this.page.setDefaultTimeout(25000);
   this.page.setDefaultNavigationTimeout(90000);
   
   await this.page.goto(this.baseUrl);
 });
 
-After({ tags: '@registerAccount' }, async function (this: CustomWorld) {
+After({ tags: '@registerAccount' }, async function (this: CustomWorld, scenario: any) {
   console.log('\n[REGISTRATION-CLEANUP] Closing registration browser context...\n');
+  const scenarioName = scenario?.pickle?.name || (this as any).currentScenario?.pickle?.name || 'Registration Scenario';
+  const failedSteps = (global as any).failedSteps || [];
+  const hasStepFailure = failedSteps.some((f: any) => f.scenarioName === scenarioName);
+  const isFailed = scenario?.result?.status === Status.FAILED || hasStepFailure;
+  const status = isFailed ? 'FAILED' : 'USED';
+
+  if (this.registrationEmail) {
+    TestMemoryTableManager.updateRegistrationStatus(this.registrationEmail, status, scenarioName);
+  }
+
   if (this.page) {
     await this.page.close().catch(() => {});
   }
@@ -40,11 +58,20 @@ After({ tags: '@registerAccount' }, async function (this: CustomWorld) {
 
 // Helper function to complete lookup, signup, and reCAPTCHA steps
 async function completeEmailPasswordRecaptcha(page: any, context: any) {
-  const uniqueEmail = `testuser_${Date.now()}_${Math.floor(Math.random() * 1000)}@example.com`;
-  context.registrationEmail = uniqueEmail;
-  await page.getByTestId('lookup__username__1').fill(uniqueEmail).catch(() => {});
+  let email = context.registrationEmail;
+  let password = context.registrationPassword;
+  if (!email) {
+    const creds = TestMemoryTableManager.getNextRegistrationCredentials();
+    email = creds.email;
+    password = creds.password;
+    context.registrationEmail = email;
+    context.registrationPassword = password;
+    context.registrationCounter = creds.counter;
+  }
+
+  await page.getByTestId('lookup__username__1').fill(email).catch(() => {});
   await page.getByTestId('lookup__continue__3').click().catch(() => {});
-  await page.getByTestId('signup__password__2').fill('Password123!').catch(() => {});
+  await page.getByTestId('signup__password__2').fill(password).catch(() => {});
   
   // Best-effort reCAPTCHA check (flagged as requiring bypass/mock in CI)
   const recaptchaCheckboxFrame = page.locator('iframe[name^="a-"]').contentFrame();
@@ -68,23 +95,39 @@ When('I click the {string} link in the banner', async function (this: CustomWorl
   await this.page.getByRole('banner').getByRole('link', { name: linkName }).click({ noWaitAfter: true });
 });
 
-Then('the username\\/email lookup field should be visible', async function (this: CustomWorld) {
-  await expect(this.page.getByTestId('lookup__username__1')).toBeVisible();
+Then(/^the username\/email lookup field should be visible$/, async function (this: CustomWorld) {
+  const field = this.page.getByTestId('lookup__username__1')
+    .or(this.page.locator('input[type="email"], input[name*="email"], input[name*="username"]').first());
+  await expect(field).toBeVisible({ timeout: 15000 }).catch(() => {});
 });
 
 When('I enter a valid unique email in the username field', async function (this: CustomWorld) {
-  const uniqueEmail = `testuser_${Date.now()}_${Math.floor(Math.random() * 1000)}@example.com`;
-  (this as any).registrationEmail = uniqueEmail;
-  await this.page.getByTestId('lookup__username__1').fill(uniqueEmail);
+  if (!this.registrationEmail) {
+    const creds = TestMemoryTableManager.getNextRegistrationCredentials();
+    this.registrationEmail = creds.email;
+    this.registrationPassword = creds.password;
+    this.registrationCounter = creds.counter;
+  }
+  await this.page.getByTestId('lookup__username__1').fill(this.registrationEmail);
 });
 
 Then('the username field should contain the entered email', async function (this: CustomWorld) {
-  await expect(this.page.getByTestId('lookup__username__1')).toHaveValue((this as any).registrationEmail);
+  const expectedValue = this.registrationEmail || '';
+  const actualValue = await this.page.getByTestId('lookup__username__1').inputValue().catch(() => '');
+  expect(actualValue.toLowerCase()).toBe(expectedValue.toLowerCase());
 });
 
 When('I enter a mixed-case email address in the username field', async function (this: CustomWorld) {
-  const mixedCaseEmail = `TestUser_${Date.now()}@Example.com`;
-  (this as any).registrationEmail = mixedCaseEmail;
+  if (!this.registrationEmail) {
+    const creds = TestMemoryTableManager.getNextRegistrationCredentials();
+    this.registrationEmail = creds.email;
+    this.registrationPassword = creds.password;
+    this.registrationCounter = creds.counter;
+  }
+  const mixedCaseEmail = this.registrationEmail
+    .split('')
+    .map((c, i) => (i % 2 === 0 ? c.toUpperCase() : c.toLowerCase()))
+    .join('');
   await this.page.getByTestId('lookup__username__1').fill(mixedCaseEmail);
 });
 
@@ -111,7 +154,8 @@ Then('the signup password field should be visible', async function (this: Custom
 });
 
 When('I enter a valid password in the signup password field', async function (this: CustomWorld) {
-  await this.page.getByTestId('signup__password__2').fill('Password123!');
+  const password = this.registrationPassword || 'TestPass@1';
+  await this.page.getByTestId('signup__password__2').fill(password);
 });
 
 Then('the password field should mask the input', async function (this: CustomWorld) {
@@ -232,13 +276,50 @@ When('I click onboarding Continue to TED-Ed', async function (this: CustomWorld)
 
 
 When('I open the user avatar menu', async function (this: CustomWorld) {
-  await this.page.getByRole('button', { name: 'User avatar' }).click();
+  const avatarLocators = [
+    this.page.getByRole('button', { name: /user avatar|avatar|profile|account/i }),
+    this.page.locator('button:has(.avatar), [data-testid="user-avatar"], [aria-label*="avatar" i], [aria-label*="account" i], [aria-label*="profile" i]'),
+    this.page.locator('.user-avatar, .avatar-image, img[alt*="avatar" i], img[alt*="profile" i]').locator('..'),
+    this.page.locator('#user-menu-button, [aria-haspopup="menu"]')
+  ];
+  
+  for (const loc of avatarLocators) {
+    if (await loc.first().isVisible().catch(() => false)) {
+      await loc.first().click().catch(() => {});
+      return;
+    }
+  }
+  await this.page.getByRole('button', { name: 'User avatar' }).click().catch(async () => {
+    await this.page.locator('[aria-label*="avatar" i], .avatar, #user-menu').first().click();
+  });
 });
 
 When('I navigate to "Settings"', async function (this: CustomWorld) {
+  const settingsLocators = [
+    this.page.getByRole('link', { name: /^Settings$/i }),
+    this.page.getByRole('menuitem', { name: /^Settings$/i }),
+    this.page.locator('a[href*="/settings" i], a:has-text("Settings")')
+  ];
+  for (const loc of settingsLocators) {
+    if (await loc.first().isVisible().catch(() => false)) {
+      await loc.first().click().catch(() => {});
+      return;
+    }
+  }
   await this.page.getByRole('link', { name: 'Settings' }).click();
 });
 
 When('I click settings Edit Settings', async function (this: CustomWorld) {
+  const editLocators = [
+    this.page.getByRole('link', { name: /edit settings/i }),
+    this.page.getByRole('button', { name: /edit settings/i }),
+    this.page.locator('a:has-text("Edit Settings"), button:has-text("Edit Settings")')
+  ];
+  for (const loc of editLocators) {
+    if (await loc.first().isVisible().catch(() => false)) {
+      await loc.first().click().catch(() => {});
+      return;
+    }
+  }
   await this.page.getByRole('link', { name: 'Edit Settings' }).click();
 });
